@@ -375,8 +375,13 @@
 //
 // TROQUE AS DUAS LINHAS ABAIXO pelos dados do seu projeto Supabase
 // (Project Settings > API no painel do Supabase).
+// IMPORTANTE: SUPABASE_URL deve conter APENAS a URL base do projeto,
+// sem "/rest/v1/" no final — os caminhos completos (/rest/v1/..., 
+// /auth/v1/...) já são montados nas funções abaixo. Deixar o "/rest/v1/"
+// aqui duplicava o caminho (.../rest/v1/rest/v1/...) e causava 404 em
+// todas as chamadas, o que gerava o aviso de "Não foi possível conectar".
 // ============================================================
-const SUPABASE_URL = "https://yrbkwpgqeerqhhxsnrno.supabase.co/rest/v1/";
+const SUPABASE_URL = "https://yrbkwpgqeerqhhxsnrno.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_N2u-__7UfmlbXz7ufXtZVw_pSb1IQ87";
 
 const STORAGE_KEY = "presentes-lista"; // não precisa alterar
@@ -384,6 +389,7 @@ let presentes = [];
 let abaAtual = "disponiveis";
 let modoAdmin = false;
 let adminToken = null; // token de sessão do usuário admin logado (em memória, some ao recarregar)
+let dadosReais = false; // true somente depois que os dados vieram do Supabase (ids reais/uuid)
 
 // Lista usada apenas como fallback visual imediato enquanto o Supabase
 // responde, ou caso a conexão falhe por completo.
@@ -461,6 +467,7 @@ async function carregarPresentes() {
     if (!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
     presentes = data;
+    dadosReais = true;
     renderizarTudo();
     esconderAvisoConexao();
   } catch (e) {
@@ -553,10 +560,12 @@ function cardHtml(p) {
   const linkHtml = p.link_sugestao_compra ? `<a href="${escapeHtml(p.link_sugestao_compra)}" target="_blank" class="link">ver sugestão ↗</a>` : "";
 
   const acaoHtml = disponivel
-    ? `<button class="btn btn-primary" onclick="abrirModalReserva('${p.id}')">🎁 Presentear</button>`
+    ? (dadosReais
+        ? `<button class="btn btn-primary" onclick="abrirModalReserva('${p.id}')">🎁 Presentear</button>`
+        : `<button class="btn btn-primary" disabled>Carregando...</button>`)
     : `<div class="reserved-note">Presenteado por ${escapeHtml(p.reservado_por || '')}</div>`;
 
-  const adminHtml = modoAdmin ? `
+  const adminHtml = (modoAdmin && dadosReais) ? `
     <div class="admin-actions">
       <button class="btn btn-secondary" onclick="abrirModalEdicao('${p.id}')">Editar</button>
       ${!disponivel ? `<button class="btn btn-secondary" onclick="liberarPresente('${p.id}')">Liberar</button>` : ""}
@@ -814,11 +823,6 @@ async function liberarPresente(id) {
 }
 
 // ---------- INIT ----------
-carregarPresentes();
-</script>
-</body>
-</html>
-
 carregarPresentes();
 </script>
 </body>
