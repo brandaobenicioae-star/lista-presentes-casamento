@@ -486,7 +486,18 @@ async function reservarPresente(id, nome, mensagem) {
       8000
     );
     if (!res.ok) {
-      return { sucesso: false, mensagem: "Não foi possível conectar ao servidor. Tente novamente." };
+      let detalhe = "";
+      try {
+        const corpoErro = await res.json();
+        detalhe = corpoErro.message || corpoErro.hint || corpoErro.error_description || "";
+      } catch (e) {}
+      console.error("Falha ao reservar presente — status " + res.status, detalhe);
+      return {
+        sucesso: false,
+        mensagem: detalhe
+          ? `Não foi possível reservar (${detalhe}). Veja o Passo de Solução de Problemas no DEPLOY.md.`
+          : `Não foi possível conectar ao servidor (erro ${res.status}). Tente novamente em instantes.`,
+      };
     }
     const data = await res.json();
     const resultado = Array.isArray(data) ? data[0] : data;
@@ -539,7 +550,6 @@ function renderizarGrid() {
 
 function cardHtml(p) {
   const disponivel = p.status === "disponivel";
-  const precoHtml = p.preco_estimado ? `<span class="price">R$ ${Number(p.preco_estimado).toLocaleString('pt-BR')}</span>` : `<span></span>`;
   const linkHtml = p.link_sugestao_compra ? `<a href="${escapeHtml(p.link_sugestao_compra)}" target="_blank" class="link">ver sugestão ↗</a>` : "";
 
   const acaoHtml = disponivel
@@ -564,7 +574,7 @@ function cardHtml(p) {
         <p class="desc">${escapeHtml(p.descricao || '')}</p>
       </div>
       <div>
-        <div class="card-bottom-row">${precoHtml}${linkHtml}</div>
+        ${linkHtml ? `<div class="card-bottom-row" style="justify-content:flex-end;">${linkHtml}</div>` : ""}
         ${acaoHtml}
         ${adminHtml}
       </div>
@@ -582,7 +592,7 @@ function abrirModalReserva(id) {
         <div class="modal-eyebrow">✦ Confirmar presente</div>
         <h3>${escapeHtml(presente.nome)}</h3>
         <div id="formErro"></div>
-        <label class="field-label">Nome completo</label>
+        <label class="field-label">Nome completo (opcional)</label>
         <input type="text" id="inputNome" placeholder="Como quer ser identificado(a) na lista" />
         <label class="field-label">Mensagem de carinho aos noivos</label>
         <textarea id="inputMensagem" rows="3" placeholder="Deixe um recado para o casal (opcional)"></textarea>
@@ -598,10 +608,9 @@ function abrirModalReserva(id) {
 }
 
 function atualizarBotaoConfirmar() {
-  const nome = document.getElementById("inputNome")?.value.trim();
   const confirma = document.getElementById("inputConfirma")?.checked;
   const btn = document.getElementById("btnConfirmar");
-  if (btn) btn.disabled = !(nome && confirma);
+  if (btn) btn.disabled = !confirma;
 }
 
 function fecharModal() {
@@ -609,7 +618,8 @@ function fecharModal() {
 }
 
 async function confirmarReserva(id) {
-  const nome = document.getElementById("inputNome").value.trim();
+  const nomeDigitado = document.getElementById("inputNome").value.trim();
+  const nome = nomeDigitado || "Convidado";
   const mensagem = document.getElementById("inputMensagem").value.trim();
   const btn = document.getElementById("btnConfirmar");
   btn.disabled = true;
@@ -618,7 +628,8 @@ async function confirmarReserva(id) {
   const resultado = await reservarPresente(id, nome, mensagem);
   if (resultado.sucesso) {
     fecharModal();
-    mostrarToast("success", `Presente reservado com carinho, ${nome.split(" ")[0]}!`);
+    const saudacao = nomeDigitado ? `, ${nomeDigitado.split(" ")[0]}` : "";
+    mostrarToast("success", `Presente reservado com carinho${saudacao}!`);
     renderizarTudo();
   } else {
     document.getElementById("formErro").innerHTML = `<div class="form-error">${escapeHtml(resultado.mensagem)}</div>`;
@@ -720,8 +731,6 @@ function abrirModalEdicao(id) {
         <textarea id="fDescricao" rows="2">${escapeHtml(p.descricao)}</textarea>
         <label class="field-label">Categoria</label>
         <input type="text" id="fCategoria" value="${escapeHtml(p.categoria)}" placeholder="Ex: Cozinha, Quarto, Mesa..." />
-        <label class="field-label">Preço estimado (R$)</label>
-        <input type="number" id="fPreco" value="${p.preco_estimado || ''}" />
         <label class="field-label">Link de sugestão de compra</label>
         <input type="url" id="fLink" value="${escapeHtml(p.link_sugestao_compra || '')}" placeholder="https://..." />
         <button class="btn btn-primary" id="btnSalvarPresente" onclick="salvarPresenteAdmin(${editando ? `'${id}'` : 'null'})">Salvar presente</button>
@@ -736,7 +745,6 @@ async function salvarPresenteAdmin(id) {
   const nome = document.getElementById("fNome").value.trim();
   const descricao = document.getElementById("fDescricao").value.trim();
   const categoria = document.getElementById("fCategoria").value.trim() || "Geral";
-  const preco_estimado = parseFloat(document.getElementById("fPreco").value) || null;
   const link_sugestao_compra = document.getElementById("fLink").value.trim();
   if (!nome) return;
 
@@ -749,13 +757,13 @@ async function salvarPresenteAdmin(id) {
     if (id) {
       res = await fetchComTimeout(
         `${SUPABASE_URL}/rest/v1/presentes?id=eq.${id}`,
-        { method: "PATCH", headers: headersAdmin(), body: JSON.stringify({ nome, descricao, categoria, preco_estimado, link_sugestao_compra }) },
+        { method: "PATCH", headers: headersAdmin(), body: JSON.stringify({ nome, descricao, categoria, link_sugestao_compra }) },
         8000
       );
     } else {
       res = await fetchComTimeout(
         `${SUPABASE_URL}/rest/v1/presentes`,
-        { method: "POST", headers: headersAdmin(), body: JSON.stringify({ nome, descricao, categoria, preco_estimado, link_sugestao_compra, status: "disponivel" }) },
+        { method: "POST", headers: headersAdmin(), body: JSON.stringify({ nome, descricao, categoria, link_sugestao_compra, status: "disponivel" }) },
         8000
       );
     }
@@ -806,6 +814,11 @@ async function liberarPresente(id) {
 }
 
 // ---------- INIT ----------
+carregarPresentes();
+</script>
+</body>
+</html>
+
 carregarPresentes();
 </script>
 </body>
