@@ -760,6 +760,1103 @@ async function carregarPresentes() {
 // reservar_presente() dentro do banco (ver schema.sql), que só marca o
 // item como reservado se ele ainda estiver 'disponivel' no exato momento
 // da transação. Aqui só chamamos essa função e mostramos o resultado.
+async function reservarPresente(id) {
+  try {
+    const res = await fetchComTimeout(
+      `${SUPABASE_URL}/rest/v1/rpc/reservar_presente`,
+      {
+        method: "POST",
+        headers: headersPublicos(),
+        body: JSON.stringify({ p_id: id }),
+      },
+      8000
+    );
+    if (!res.ok) {
+      let detalhe = "";
+      try {
+        const corpoErro = await res.json();
+        detalhe = corpoErro.message || corpoErro.hint || corpoErro.error_description || "";
+      } catch (e) {}
+      console.error("Falha ao reservar presente — status " + res.status, detalhe);
+      return {
+        sucesso: false,
+        mensagem: detalhe
+          ? `Não foi possível reservar (${detalhe}). Veja o Passo de Solução de Problemas no DEPLOY.md.`
+          : `Não foi possível conectar ao servidor (erro ${res.status}). Tente novamente em instantes.`,
+      };
+    }
+    const data = await res.json();
+    const resultado = Array.isArray(data) ? data[0] : data;
+    if (resultado && resultado.sucesso) {
+      await carregarPresentes(); // sincroniza com o estado real do banco
+    }
+    return resultado || { sucesso: false, mensagem: "Resposta inesperada do servidor." };
+  } catch (e) {
+    return { sucesso: false, mensagem: "Erro de conexão. Verifique sua internet e tente novamente." };
+  }
+}
+
+// ---------- RENDER ----------
+function renderizarTudo() {
+  renderizarTabs();
+  renderizarGrid();
+}
+
+function renderizarTabs() {
+  const disponiveis = presentes.filter(p => p.status === "disponivel").length;
+  const reservados = presentes.filter(p => p.status === "reservado").length;
+  document.getElementById("tabs").innerHTML = `
+    <button class="tab-btn ${abaAtual === 'disponiveis' ? 'active' : ''}" onclick="mudarAba('disponiveis')">Presentes Disponíveis (${disponiveis})</button>
+    <button class="tab-btn ${abaAtual === 'reservados' ? 'active' : ''}" onclick="mudarAba('reservados')">Já Reservados (${reservados})</button>
+  `;
+}
+
+function mudarAba(aba) {
+  abaAtual = aba;
+  renderizarTudo();
+}
+
+function escapeHtml(str) {
+  const d = document.createElement("div");
+  d.innerText = str ?? "";
+  return d.innerHTML;
+}
+
+function renderizarGrid() {
+  const lista = presentes.filter(p => p.status === (abaAtual === "disponiveis" ? "disponivel" : "reservado"));
+  const el = document.getElementById("content");
+
+  if (lista.length === 0) {
+    el.innerHTML = `<p class="empty-state">Nenhum item nesta aba no momento.</p>`;
+    return;
+  }
+
+  el.innerHTML = `<div class="grid">${lista.map(cardHtml).join("")}</div>`;
+}
+
+function cardHtml(p) {
+  const disponivel = p.status === "disponivel";
+  const linkHtml = p.link_sugestao_compra ? `<a href="${escapeHtml(p.link_sugestao_compra)}" target="_blank" class="link">ver sugestão ↗</a>` : "";
+
+  const acaoHtml = disponivel
+    ? (dadosReais
+        ? `<button class="btn btn-primary" onclick="abrirModalReserva('${p.id}')">🎁 Presentear</button>`
+        : `<button class="btn btn-primary" disabled>Carregando...</button>`)
+    : `<div class="reserved-note">Já reservado com carinho 💛</div>`;
+
+  const adminHtml = (modoAdmin && dadosReais) ? `
+    <div class="admin-actions">
+      <button class="btn btn-secondary" onclick="abrirModalEdicao('${p.id}')">Editar</button>
+      ${!disponivel ? `<button class="btn btn-secondary" onclick="liberarPresente('${p.id}')">Liberar</button>` : ""}
+      <button class="btn btn-danger" onclick="excluirPresente('${p.id}')">Excluir</button>
+    </div>` : "";
+
+  return `
+    <div class="card ${disponivel ? 'available' : 'reserved'}">
+      <div>
+        <div class="card-top">
+          <span class="tag">${escapeHtml(p.categoria || 'Geral')}</span>
+          ${!disponivel ? `<span class="tag reserved-tag">✓ Reservado</span>` : ""}
+        </div>
+        <h3>${escapeHtml(p.nome)}</h3>
+        <p class="desc">${escapeHtml(p.descricao || '')}</p>
+      </div>
+      <div>
+        ${linkHtml ? `<div class="card-bottom-row" style="justify-content:flex-end;">${linkHtml}</div>` : ""}
+        ${acaoHtml}
+        ${adminHtml}
+      </div>
+    </div>
+  `;
+}
+
+// ---------- MODAL DE RESERVA ----------
+function abrirModalReserva(id) {
+  const presente = presentes.find(p => p.id === id);
+  document.getElementById("modalRoot").innerHTML = `
+    <div class="overlay" id="overlay">
+      <div class="modal">
+        <button class="modal-close" onclick="fecharModal()">✕</button>
+        <div class="modal-eyebrow">✦ Confirmar presente</div>
+        <h3>${escapeHtml(presente.nome)}</h3>
+        <div id="formErro"></div>
+        <label class="checkbox-row">
+          <input type="checkbox" id="inputConfirma" onchange="atualizarBotaoConfirmar()" />
+          Confirmo que vou presentear com este item e entendo que ele sairá da lista para os demais convidados.
+        </label>
+        <button class="btn btn-confirm" id="btnConfirmar" disabled onclick="confirmarReserva('${id}')">♥ Confirmar presente</button>
+      </div>
+    </div>
+  `;
+}
+
+function atualizarBotaoConfirmar() {
+  const confirma = document.getElementById("inputConfirma")?.checked;
+  const btn = document.getElementById("btnConfirmar");
+  if (btn) btn.disabled = !confirma;
+}
+
+function fecharModal() {
+  document.getElementById("modalRoot").innerHTML = "";
+}
+
+async function confirmarReserva(id) {
+  const btn = document.getElementById("btnConfirmar");
+  btn.disabled = true;
+  btn.innerText = "Confirmando...";
+
+  const resultado = await reservarPresente(id);
+  if (resultado.sucesso) {
+    fecharModal();
+    mostrarToast("success", "Presente reservado com carinho!");
+    renderizarTudo();
+  } else {
+    document.getElementById("formErro").innerHTML = `<div class="form-error">${escapeHtml(resultado.mensagem)}</div>`;
+    btn.disabled = false;
+    btn.innerText = "♥ Confirmar presente";
+    renderizarTudo();
+  }
+}
+
+function mostrarToast(tipo, texto) {
+  const root = document.getElementById("toastRoot");
+  root.innerHTML = `<div class="toast ${tipo}">${escapeHtml(texto)}</div>`;
+  setTimeout(() => { root.innerHTML = ""; }, 3500);
+}
+
+// ---------- ADMIN: LOGIN (Supabase Auth — e-mail + senha) ----------
+function abrirLoginAdmin() {
+  document.getElementById("modalRoot").innerHTML = `
+    <div class="overlay">
+      <div class="modal">
+        <button class="modal-close" onclick="fecharModal()">✕</button>
+        <div class="modal-eyebrow">✦ Área restrita</div>
+        <h3>Acesso dos noivos</h3>
+        <label class="field-label">E-mail</label>
+        <input type="email" id="inputEmail" placeholder="seu@email.com" />
+        <label class="field-label">Senha</label>
+        <input type="password" id="inputSenha" placeholder="Sua senha" />
+        <div id="loginErro"></div>
+        <button class="btn btn-primary" id="btnEntrar" onclick="validarLoginAdmin()">Entrar</button>
+      </div>
+    </div>
+  `;
+  document.getElementById("inputEmail").focus();
+}
+
+async function validarLoginAdmin() {
+  const email = document.getElementById("inputEmail").value.trim();
+  const senha = document.getElementById("inputSenha").value;
+  const btn = document.getElementById("btnEntrar");
+  btn.disabled = true;
+  btn.innerText = "Entrando...";
+
+  try {
+    const res = await fetchComTimeout(
+      `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+      {
+        method: "POST",
+        headers: { apikey: SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: senha }),
+      },
+      8000
+    );
+    const data = await res.json();
+
+    if (!res.ok || !data.access_token) {
+      document.getElementById("loginErro").innerHTML =
+        `<div class="form-error">${escapeHtml(data.error_description || data.msg || "E-mail ou senha incorretos.")}</div>`;
+      btn.disabled = false;
+      btn.innerText = "Entrar";
+      return;
+    }
+
+    adminToken = data.access_token;
+    modoAdmin = true;
+    fecharModal();
+    document.getElementById("adminBadge").style.display = "block";
+    document.getElementById("adminToggle").style.display = "none";
+    renderizarTudo();
+  } catch (e) {
+    document.getElementById("loginErro").innerHTML = `<div class="form-error">Erro de conexão. Tente novamente.</div>`;
+    btn.disabled = false;
+    btn.innerText = "Entrar";
+  }
+}
+
+function sairModoAdmin() {
+  modoAdmin = false;
+  adminToken = null;
+  document.getElementById("adminBadge").style.display = "none";
+  document.getElementById("adminToggle").style.display = "inline-block";
+  renderizarTudo();
+}
+
+// ---------- ADMIN: CADASTRAR / EDITAR / EXCLUIR / LIBERAR ----------
+function abrirModalEdicao(id) {
+  const editando = id !== null;
+  const p = editando ? presentes.find(x => x.id === id) : { nome: "", descricao: "", categoria: "", preco_estimado: "", link_sugestao_compra: "" };
+
+  document.getElementById("modalRoot").innerHTML = `
+    <div class="overlay">
+      <div class="modal">
+        <button class="modal-close" onclick="fecharModal()">✕</button>
+        <div class="modal-eyebrow">✦ ${editando ? 'Editar presente' : 'Novo presente'}</div>
+        <h3>${editando ? escapeHtml(p.nome) : 'Adicionar presente'}</h3>
+        <div id="adminFormErro"></div>
+        <label class="field-label">Nome do presente</label>
+        <input type="text" id="fNome" value="${escapeHtml(p.nome)}" />
+        <label class="field-label">Descrição</label>
+        <textarea id="fDescricao" rows="2">${escapeHtml(p.descricao)}</textarea>
+        <label class="field-label">Categoria</label>
+        <input type="text" id="fCategoria" value="${escapeHtml(p.categoria)}" placeholder="Ex: Cozinha, Quarto, Mesa..." />
+        <label class="field-label">Link de sugestão de compra</label>
+        <input type="url" id="fLink" value="${escapeHtml(p.link_sugestao_compra || '')}" placeholder="https://..." />
+        <button class="btn btn-primary" id="btnSalvarPresente" onclick="salvarPresenteAdmin(${editando ? `'${id}'` : 'null'})">Salvar presente</button>
+      </div>
+    </div>
+  `;
+}
+
+function abrirModalNovoPresente() { abrirModalEdicao(null); }
+
+async function salvarPresenteAdmin(id) {
+  const nome = document.getElementById("fNome").value.trim();
+  const descricao = document.getElementById("fDescricao").value.trim();
+  const categoria = document.getElementById("fCategoria").value.trim() || "Geral";
+  const link_sugestao_compra = document.getElementById("fLink").value.trim();
+  if (!nome) return;
+
+  const btn = document.getElementById("btnSalvarPresente");
+  btn.disabled = true;
+  btn.innerText = "Salvando...";
+
+  try {
+    let res;
+    if (id) {
+      res = await fetchComTimeout(
+        `${SUPABASE_URL}/rest/v1/presentes?id=eq.${id}`,
+        { method: "PATCH", headers: headersAdmin(), body: JSON.stringify({ nome, descricao, categoria, link_sugestao_compra }) },
+        8000
+      );
+    } else {
+      res = await fetchComTimeout(
+        `${SUPABASE_URL}/rest/v1/presentes`,
+        { method: "POST", headers: headersAdmin(), body: JSON.stringify({ nome, descricao, categoria, link_sugestao_compra, status: "disponivel" }) },
+        8000
+      );
+    }
+
+    if (!res.ok) {
+      const erro = await res.json().catch(() => ({}));
+      document.getElementById("adminFormErro").innerHTML =
+        `<div class="form-error">Não foi possível salvar. ${escapeHtml(erro.message || "Verifique se sua conta tem permissão de admin.")}</div>`;
+      btn.disabled = false;
+      btn.innerText = "Salvar presente";
+      return;
+    }
+
+    await carregarPresentes();
+    fecharModal();
+    mostrarToast("success", "Presente salvo com sucesso!");
+  } catch (e) {
+    document.getElementById("adminFormErro").innerHTML = `<div class="form-error">Erro de conexão. Tente novamente.</div>`;
+    btn.disabled = false;
+    btn.innerText = "Salvar presente";
+  }
+}
+
+async function excluirPresente(id) {
+  if (!confirm("Remover este presente da lista? Essa ação não pode ser desfeita.")) return;
+  try {
+    const res = await fetchComTimeout(`${SUPABASE_URL}/rest/v1/presentes?id=eq.${id}`, { method: "DELETE", headers: headersAdmin() }, 8000);
+    if (!res.ok) { mostrarToast("error", "Não foi possível excluir. Verifique sua permissão de admin."); return; }
+    await carregarPresentes();
+  } catch (e) {
+    mostrarToast("error", "Erro de conexão ao excluir.");
+  }
+}
+
+async function liberarPresente(id) {
+  if (!confirm("Liberar este presente novamente para outros convidados?")) return;
+  try {
+    const res = await fetchComTimeout(
+      `${SUPABASE_URL}/rest/v1/presentes?id=eq.${id}`,
+      { method: "PATCH", headers: headersAdmin(), body: JSON.stringify({ status: "disponivel" }) },
+      8000
+    );
+    if (!res.ok) { mostrarToast("error", "Não foi possível liberar. Verifique sua permissão de admin."); return; }
+    await carregarPresentes();
+  } catch (e) {
+    mostrarToast("error", "Erro de conexão ao liberar.");
+  }
+}
+
+// ---------- CONTAGEM REGRESSIVA ----------
+const DATA_CASAMENTO = new Date("2026-08-15T10:30:00-03:00").getTime();
+
+function atualizarContagem() {
+  const agora = Date.now();
+  const diff = DATA_CASAMENTO - agora;
+
+  const elDias = document.getElementById("cd-dias");
+  const elHoras = document.getElementById("cd-horas");
+  const elMin = document.getElementById("cd-min");
+  const elSeg = document.getElementById("cd-seg");
+  if (!elDias) return; // seção ainda não renderizada
+
+  if (diff <= 0) {
+    elDias.innerText = "0";
+    elHoras.innerText = "0";
+    elMin.innerText = "0";
+    elSeg.innerText = "0";
+    return;
+  }
+
+  const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const min = Math.floor((diff / (1000 * 60)) % 60);
+  const seg = Math.floor((diff / 1000) % 60);
+
+  elDias.innerText = dias;
+  elHoras.innerText = String(horas).padStart(2, "0");
+  elMin.innerText = String(min).padStart(2, "0");
+  elSeg.innerText = String(seg).padStart(2, "0");
+}
+
+atualizarContagem();
+setInterval(atualizarContagem, 1000);
+
+// ---------- INIT ----------
+carregarPresentes();
+</script>
+</body>
+</html>    text-align: center;
+    padding: 64px 24px 56px;
+  }
+
+  .monogram {
+    margin: 0 auto 24px;
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--gold);
+    color: var(--olive);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+  }
+
+  .eyebrow {
+    letter-spacing: 0.25em;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--olive);
+    margin-bottom: 12px;
+  }
+
+  h1.title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 48px;
+    margin: 0 0 16px;
+  }
+
+  .subtitle {
+    max-width: 560px;
+    margin: 0 auto;
+    font-size: 15px;
+    color: var(--muted);
+  }
+
+  .tabs {
+    max-width: 960px;
+    margin: 40px auto 8px;
+    padding: 0 24px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 9px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .2s ease;
+  }
+  .tab-btn.active {
+    background: var(--olive);
+    border-color: var(--olive);
+    color: var(--champagne);
+  }
+
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 24px 96px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .card.available:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(44,62,80,0.08);
+  }
+  .card.reserved { opacity: 0.72; }
+
+  .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; }
+
+  .tag {
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    background: var(--tag-bg);
+    color: var(--olive);
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .tag.reserved-tag {
+    background: var(--reserved-bg);
+    color: var(--reserved-text);
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  .card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    margin: 0 0 6px;
+  }
+  .card p.desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0 0 16px;
+    line-height: 1.5;
+  }
+
+  .card-bottom-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .price { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold); }
+  .link { font-size: 12px; color: var(--olive); text-decoration: none; }
+
+  .btn {
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 11px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: opacity .2s ease;
+  }
+  .btn:hover { opacity: .9; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+
+  .btn-primary { background: var(--graphite); color: var(--champagne); }
+  .btn-confirm { background: var(--olive); color: var(--champagne); }
+  .btn-secondary { background: transparent; color: var(--graphite); border: 1px solid var(--border); }
+  .btn-danger { background: transparent; color: var(--error); border: 1px solid #e6c9c5; font-size: 12px; padding: 8px; }
+
+  .reserved-note {
+    width: 100%;
+    font-size: 12px;
+    font-style: italic;
+    text-align: center;
+    background: #F7F4EE;
+    color: #8a8578;
+    padding: 11px;
+    border-radius: 12px;
+  }
+
+  .admin-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .admin-actions .btn { font-size: 12px; padding: 8px; }
+
+  .empty-state {
+    text-align: center;
+    font-size: 14px;
+    color: #8a8578;
+    margin-top: 64px;
+  }
+
+  /* Modal */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(44,62,80,0.45);
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+    z-index: 50;
+  }
+  .modal {
+    width: 100%; max-width: 420px;
+    background: var(--champagne);
+    border-radius: 16px;
+    padding: 32px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-close {
+    position: absolute; top: 18px; right: 18px;
+    background: none; border: none; cursor: pointer;
+    color: var(--graphite); opacity: .6; font-size: 18px;
+  }
+  .modal-close:hover { opacity: 1; }
+
+  .modal-eyebrow {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--olive); margin-bottom: 6px;
+  }
+  .modal h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 24px;
+    margin: 0 0 20px;
+  }
+
+  label.field-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  input[type=text], input[type=email], input[type=number], input[type=password], input[type=url], textarea, select {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--graphite);
+    margin-bottom: 16px;
+    outline: none;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--gold); }
+  textarea { resize: none; }
+
+  .checkbox-row {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: var(--muted);
+    margin-bottom: 22px; cursor: pointer;
+  }
+  .checkbox-row input { margin-top: 3px; width: auto; margin-bottom: 0; }
+
+  .form-error {
+    background: var(--reserved-bg);
+    color: var(--reserved-text);
+    font-size: 13px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%; transform: translateX(-50%);
+    padding: 13px 22px;
+    border-radius: 12px;
+    font-size: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.15);
+    z-index: 60;
+    animation: fadeUp .25s ease;
+  }
+  .toast.success { background: var(--graphite); color: var(--champagne); }
+  .toast.error { background: var(--error); color: #fff; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translate(-50%, 8px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+
+  footer { text-align: center; padding-bottom: 40px; font-size: 12px; color: #a8a290; }
+
+  .admin-bar {
+    max-width: 960px; margin: 0 auto; padding: 0 24px;
+    display: flex; justify-content: flex-end;
+  }
+  .admin-link {
+    background: none; border: none; cursor: pointer;
+    font-size: 12px; color: #b8b19f; text-decoration: underline;
+    padding: 12px 0;
+  }
+  .admin-badge {
+    max-width: 960px; margin: 12px auto 0; padding: 0 24px;
+  }
+  .admin-banner {
+    background: #F3F0E6; border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 18px;
+    font-size: 13px; color: var(--olive);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .admin-banner .actions { display: flex; gap: 10px; align-items: center; }
+  .admin-banner button.add-btn {
+    background: var(--olive); color: var(--champagne);
+    border: none; border-radius: 8px; padding: 7px 14px; font-size: 12px; cursor: pointer;
+  }
+
+  .loading-text { text-align: center; font-size: 14px; color: #8a8578; padding: 60px 0; }
+
+  /* ---------- Hero estilo convite de casamento ---------- */
+  .hero-wed {
+    position: relative;
+    text-align: center;
+    padding: 56px 24px 40px;
+    background:
+      radial-gradient(ellipse at top left, rgba(212,175,55,0.08), transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(143,151,121,0.10), transparent 55%),
+      var(--champagne);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .hero-wed::before, .hero-wed::after {
+    content: "";
+    position: absolute;
+    width: 130px; height: 130px;
+    border: 1px solid rgba(212,175,55,0.35);
+    border-radius: 40% 60% 55% 45% / 45% 40% 60% 55%;
+  }
+  .hero-wed::before { top: -30px; left: -30px; }
+  .hero-wed::after { bottom: -30px; right: -30px; }
+
+  .divider-heart {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    color: var(--gold);
+    margin: 14px 0;
+  }
+  .divider-heart .line { width: 46px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .divider-heart svg { width: 14px; height: 14px; }
+
+  .hero-invite-text {
+    max-width: 500px; margin: 0 auto 6px;
+    font-size: 13.5px; color: var(--olive);
+    letter-spacing: 0.02em;
+    line-height: 1.7;
+    text-transform: uppercase;
+  }
+
+  h1.couple-names {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 56px;
+    line-height: 1.05;
+    margin: 8px 0 0;
+    color: var(--graphite);
+  }
+  h1.couple-names .amp {
+    display: block;
+    font-size: 30px;
+    color: var(--gold);
+    margin: 4px 0;
+  }
+
+  .vamos-casar {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 8px 0 22px;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    max-width: 560px;
+    margin: 0 auto 22px;
+    flex-wrap: wrap;
+  }
+  .info-item {
+    flex: 1 1 140px;
+    padding: 0 18px;
+    border-right: 1px solid var(--border);
+  }
+  .info-item:last-child { border-right: none; }
+  .info-icon {
+    width: 30px; height: 30px;
+    margin: 0 auto 8px;
+    color: var(--gold);
+  }
+  .info-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--graphite);
+  }
+  .info-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--olive);
+    margin-top: 2px;
+  }
+
+  .endereco-linha {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    margin-bottom: 22px;
+  }
+
+  .countdown {
+    display: flex; justify-content: center; gap: 14px;
+    max-width: 420px; margin: 0 auto 8px;
+    flex-wrap: wrap;
+  }
+  .countdown-box {
+    background: #fff;
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 12px 16px;
+    min-width: 66px;
+  }
+  .countdown-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .countdown-label {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .recado-final {
+    max-width: 480px; margin: 20px auto 0;
+    font-size: 13.5px; color: var(--muted); line-height: 1.7;
+  }
+  .recado-final .assinatura {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--olive);
+    font-size: 17px;
+    margin-top: 10px;
+    display: block;
+  }
+
+  /* ---------- Seção de hospedagem ---------- */
+  .hospedagem-section {
+    max-width: 960px; margin: 0 auto; padding: 8px 24px 48px;
+  }
+  .hospedagem-titulo {
+    text-align: center; margin-bottom: 6px;
+  }
+  .hospedagem-titulo .eyebrow { margin-bottom: 4px; }
+  .hospedagem-titulo h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 30px;
+    margin: 0 0 8px;
+    color: var(--graphite);
+  }
+  .hospedagem-sub {
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--muted);
+    max-width: 480px;
+    margin: 0 auto 28px;
+    line-height: 1.6;
+  }
+  .hospedagem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .hospedagem-card {
+    background: #fff;
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 22px;
+  }
+  .hospedagem-card .htag {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--gold); margin-bottom: 8px; display: block;
+  }
+  .hospedagem-card h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px; margin: 0 0 8px; color: var(--graphite);
+  }
+  .hospedagem-card p {
+    font-size: 13px; color: var(--muted); line-height: 1.6; margin: 0 0 14px;
+  }
+  .hospedagem-card a.link {
+    font-size: 12.5px;
+    color: var(--olive);
+    border: 1px solid var(--border);
+    padding: 7px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .hospedagem-card a.link:hover { background: var(--tag-bg); }
+
+  @media (max-width: 480px) {
+    h1.couple-names { font-size: 40px; }
+    h1.couple-names .amp { font-size: 22px; }
+    .info-item { flex: 1 1 100px; padding: 0 10px; border-right: none; }
+    .countdown-box { min-width: 56px; padding: 10px 12px; }
+    .countdown-num { font-size: 22px; }
+  }
+
+  @media (max-width: 480px) {
+    h1.title { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero-wed">
+  <div class="monogram">D &amp; E</div>
+
+  <p class="hero-invite-text">É com o coração cheio de amor<br/>que convidamos você para<br/>o dia mais especial das nossas vidas.</p>
+
+  <div class="divider-heart">
+    <span class="line"></span>
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-10-9.2C.4 8.4 2 5 5.5 5c2 0 3.4 1.1 4.2 2.3C10.5 6.1 11.9 5 13.9 5 17.4 5 19 8.4 17.5 11.8 15 16.4 12 21 12 21z"/></svg>
+    <span class="line"></span>
+  </div>
+
+  <h1 class="couple-names">Domingos<span class="amp">&amp;</span>Élida</h1>
+  <p class="vamos-casar">Vamos nos casar!</p>
+
+  <div class="divider-heart">
+    <span class="line"></span>
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-10-9.2C.4 8.4 2 5 5.5 5c2 0 3.4 1.1 4.2 2.3C10.5 6.1 11.9 5 13.9 5 17.4 5 19 8.4 17.5 11.8 15 16.4 12 21 12 21z"/></svg>
+    <span class="line"></span>
+  </div>
+
+  <div class="info-row">
+    <div class="info-item">
+      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M9 15.5l1.4 1.4L15 13" /></svg>
+      <div class="info-value">15/08/2026</div>
+      <div class="info-label">Data</div>
+    </div>
+    <div class="info-item">
+      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <div class="info-value">10:30hs</div>
+      <div class="info-label">Horário</div>
+    </div>
+    <div class="info-item">
+      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s7-6.5 7-11.5A7 7 0 1 0 5 9.5C5 14.5 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
+      <div class="info-value">Mariú Garden</div>
+      <div class="info-label">Tianguá</div>
+    </div>
+  </div>
+
+  <p class="endereco-linha">R. Ver. Manoel Frota, 1000 — Centro, Tianguá</p>
+
+  <div class="countdown" id="countdown">
+    <div class="countdown-box"><div class="countdown-num" id="cd-dias">--</div><div class="countdown-label">Dias</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="cd-horas">--</div><div class="countdown-label">Horas</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="cd-min">--</div><div class="countdown-label">Min</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="cd-seg">--</div><div class="countdown-label">Seg</div></div>
+  </div>
+
+  <p class="recado-final">
+    Que este dia seja o começo da nossa maior aventura: construir um lar, compartilhar sonhos e caminhar juntos, lado a lado, por toda a vida.
+    <span class="assinatura">Mal podemos esperar para celebrar o amor com vocês!</span>
+  </p>
+</header>
+
+<section class="hospedagem-section" id="hospedagemSection">
+  <div class="hospedagem-titulo">
+    <p class="eyebrow">Para quem vem de fora</p>
+    <h2>Sugestões de Hospedagem</h2>
+  </div>
+  <p class="hospedagem-sub">Selecionamos algumas opções próximas ao local da cerimônia em Tianguá, para deixar sua estadia ainda mais tranquila.</p>
+  <div class="hospedagem-grid" id="hospedagemGrid">
+    <div class="hospedagem-card">
+      <span class="htag">Próximo ao local</span>
+      <h4>Pousada Recanto Tianguá</h4>
+      <p>Ambiente aconchegante a poucos minutos do Mariú Garden, ótima opção para famílias.</p>
+      <a class="link" href="#" target="_blank">Ver detalhes ↗</a>
+    </div>
+    <div class="hospedagem-card">
+      <span class="htag">Centro da cidade</span>
+      <h4>Hotel Serra Grande</h4>
+      <p>Bem localizado no centro de Tianguá, com fácil acesso aos principais pontos da cidade.</p>
+      <a class="link" href="#" target="_blank">Ver detalhes ↗</a>
+    </div>
+    <div class="hospedagem-card">
+      <span class="htag">Custo-benefício</span>
+      <h4>Pousada Vale Verde</h4>
+      <p>Opção mais econômica, ideal para quem busca praticidade e conforto para poucas noites.</p>
+      <a class="link" href="#" target="_blank">Ver detalhes ↗</a>
+    </div>
+  </div>
+</section>
+
+<div id="storageWarning" style="display:none; max-width:960px; margin:0 auto; padding:0 24px 12px;">
+  <div style="background:#F3ECEA; border:1px solid #e6c9c5; color:#9c6b63; border-radius:12px; padding:10px 16px; font-size:12px; text-align:center;">
+    Não foi possível conectar ao servidor agora. A lista abaixo pode estar desatualizada — tente recarregar a página em instantes.
+  </div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+
+<main>
+  <div id="content"><p class="loading-text">Carregando presentes...</p></div>
+</main>
+
+<div class="admin-badge" id="adminBadge" style="display:none;">
+  <div class="admin-banner">
+    <span>Modo noivos ativado — você pode adicionar, editar e remover presentes.</span>
+    <div class="actions">
+      <button class="add-btn" onclick="abrirModalNovoPresente()">+ Novo presente</button>
+      <button class="admin-link" onclick="sairModoAdmin()">Sair</button>
+    </div>
+  </div>
+</div>
+
+<div class="admin-bar">
+  <button class="admin-link" id="adminToggle" onclick="abrirLoginAdmin()">Área dos noivos</button>
+</div>
+
+<footer>Com carinho, até agosto de 2026. 💛</footer>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<script>
+// ============================================================
+// LISTA DE PRESENTES — versão para hospedagem estática
+// (GitHub + Vercel), com persistência real via Supabase.
+//
+// TROQUE AS DUAS LINHAS ABAIXO pelos dados do seu projeto Supabase
+// (Project Settings > API no painel do Supabase).
+// IMPORTANTE: SUPABASE_URL deve conter APENAS a URL base do projeto,
+// sem "/rest/v1/" no final — os caminhos completos (/rest/v1/..., 
+// /auth/v1/...) já são montados nas funções abaixo. Deixar o "/rest/v1/"
+// aqui duplicava o caminho (.../rest/v1/rest/v1/...) e causava 404 em
+// todas as chamadas, o que gerava o aviso de "Não foi possível conectar".
+// ============================================================
+const SUPABASE_URL = "https://yrbkwpgqeerqhhxsnrno.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_N2u-__7UfmlbXz7ufXtZVw_pSb1IQ87";
+
+const STORAGE_KEY = "presentes-lista"; // não precisa alterar
+let presentes = [];
+let abaAtual = "disponiveis";
+let modoAdmin = false;
+let adminToken = null; // token de sessão do usuário admin logado (em memória, some ao recarregar)
+let dadosReais = false; // true somente depois que os dados vieram do Supabase (ids reais/uuid)
+
+// Lista usada apenas como fallback visual imediato enquanto o Supabase
+// responde, ou caso a conexão falhe por completo.
+const PRESENTES_SEED = [
+  { id: "1", nome: "Batedeira", descricao: "Para os bolos e massas da casa nova.", categoria: "Cozinha", preco_estimado: 350, link_sugestao_compra: "", status: "disponivel" },
+  { id: "2", nome: "Processador de Alimentos", descricao: "Agiliza o dia a dia na cozinha.", categoria: "Cozinha", preco_estimado: 420, link_sugestao_compra: "", status: "disponivel" },
+  { id: "3", nome: "Cafeteira Elétrica", descricao: "Para os cafés da manhã de todos os dias.", categoria: "Cozinha", preco_estimado: 280, link_sugestao_compra: "", status: "disponivel" },
+  { id: "4", nome: "Faqueiro", descricao: "Conjunto completo de talheres para a mesa nova.", categoria: "Mesa", preco_estimado: 380, link_sugestao_compra: "", status: "disponivel" },
+  { id: "5", nome: "Jogo de Panelas Antiaderentes", descricao: "Conjunto completo para o preparo do dia a dia.", categoria: "Cozinha", preco_estimado: 650, link_sugestao_compra: "", status: "disponivel" },
+  { id: "6", nome: "Frigideiras Antiaderentes", descricao: "Diferentes tamanhos para cada receita.", categoria: "Cozinha", preco_estimado: 320, link_sugestao_compra: "", status: "disponivel" },
+  { id: "7", nome: "Jogo de Pratos Fundos", descricao: "Conjunto para as refeições em família.", categoria: "Mesa", preco_estimado: 220, link_sugestao_compra: "", status: "disponivel" },
+  { id: "8", nome: "Jogo de Pratos de Sobremesa", descricao: "Para fechar as refeições com doçura.", categoria: "Mesa", preco_estimado: 180, link_sugestao_compra: "", status: "disponivel" },
+  { id: "9", nome: "Jogo de Taças para Vinho", descricao: "Para os brindes e jantares especiais.", categoria: "Mesa", preco_estimado: 250, link_sugestao_compra: "", status: "disponivel" },
+  { id: "10", nome: "Kit para Drinks", descricao: "Coqueteleira, coador, mini balde de gelo e macerador.", categoria: "Bar", preco_estimado: 300, link_sugestao_compra: "", status: "disponivel" },
+  { id: "11", nome: "Facas de Chef", descricao: "Conjunto de facas profissionais para a cozinha.", categoria: "Cozinha", preco_estimado: 400, link_sugestao_compra: "", status: "disponivel" },
+  { id: "12", nome: "Jogo de Xícaras de Café", descricao: "Xícaras pequenas para o cafezinho de todo dia.", categoria: "Mesa", preco_estimado: 150, link_sugestao_compra: "", status: "disponivel" },
+  { id: "13", nome: "Garrafa Térmica para Café", descricao: "Para manter o café quentinho por mais tempo.", categoria: "Cozinha", preco_estimado: 180, link_sugestao_compra: "", status: "disponivel" },
+  { id: "14", nome: "Jogo de Tigelas", descricao: "Diversos tamanhos para preparar e servir.", categoria: "Cozinha", preco_estimado: 200, link_sugestao_compra: "", status: "disponivel" },
+  { id: "15", nome: "Manta para Cama (Colcha)", descricao: "Para deixar o quarto mais aconchegante.", categoria: "Quarto", preco_estimado: 350, link_sugestao_compra: "", status: "disponivel" },
+  { id: "16", nome: "Jogo de Cama", descricao: "Para noites de sono tranquilas na casa nova.", categoria: "Quarto", preco_estimado: 420, link_sugestao_compra: "", status: "disponivel" },
+  { id: "17", nome: "Jogo de Toalhas de Banho", descricao: "Conjunto macio para o dia a dia.", categoria: "Banho", preco_estimado: 280, link_sugestao_compra: "", status: "disponivel" },
+  { id: "18", nome: "Jogo de Toalhas de Rosto", descricao: "Para completar o banheiro da casa nova.", categoria: "Banho", preco_estimado: 150, link_sugestao_compra: "", status: "disponivel" },
+  { id: "19", nome: "Tábua de Passar Roupa", descricao: "Item essencial para o dia a dia da casa.", categoria: "Casa", preco_estimado: 200, link_sugestao_compra: "", status: "disponivel" },
+  { id: "20", nome: "Sapateira Organizadora", descricao: "Para manter os calçados em ordem.", categoria: "Casa", preco_estimado: 250, link_sugestao_compra: "", status: "disponivel" },
+  { id: "21", nome: "Organizador para Bancada", descricao: "Para deixar a cozinha sempre em ordem.", categoria: "Cozinha", preco_estimado: 130, link_sugestao_compra: "", status: "disponivel" },
+];
+
+// ---------- CAMADA DE ACESSO AO SUPABASE ----------
+function headersPublicos() {
+  return {
+    apikey: SUPABASE_ANON_KEY,
+    Authorization: "Bearer " + SUPABASE_ANON_KEY,
+    "Content-Type": "application/json",
+  };
+}
+function headersAdmin() {
+  return {
+    apikey: SUPABASE_ANON_KEY,
+    Authorization: "Bearer " + (adminToken || SUPABASE_ANON_KEY),
+    "Content-Type": "application/json",
+    Prefer: "return=representation",
+  };
+}
+
+function fetchComTimeout(url, opts, ms) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { ...opts, signal: controller.signal }).finally(() => clearTimeout(timer));
+}
+
+function mostrarAvisoConexao() {
+  const el = document.getElementById("storageWarning");
+  if (el) el.style.display = "block";
+}
+function esconderAvisoConexao() {
+  const el = document.getElementById("storageWarning");
+  if (el) el.style.display = "none";
+}
+
+// ---------- CARREGAR LISTA ----------
+async function carregarPresentes() {
+  // Mostra algo imediatamente — o convidado nunca fica preso na tela de
+  // carregamento, mesmo que o Supabase demore ou esteja indisponível.
+  if (presentes.length === 0) {
+    presentes = PRESENTES_SEED;
+    renderizarTudo();
+  }
+
+  try {
+    const res = await fetchComTimeout(
+      `${SUPABASE_URL}/rest/v1/presentes?select=*&order=criado_em.asc`,
+      { headers: headersPublicos() },
+      8000
+    );
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    presentes = data;
+    dadosReais = true;
+    renderizarTudo();
+    esconderAvisoConexao();
+  } catch (e) {
+    mostrarAvisoConexao();
+  }
+}
+
+// ---------- RESERVAR PRESENTE (atômico, garantido pelo Postgres) ----------
+// A exclusividade NÃO depende de nenhuma lógica aqui no navegador — quem
+// garante que só uma pessoa consegue reservar cada item é a função
+// reservar_presente() dentro do banco (ver schema.sql), que só marca o
+// item como reservado se ele ainda estiver 'disponivel' no exato momento
+// da transação. Aqui só chamamos essa função e mostramos o resultado.
 async function reservarPresente(id, nome, mensagem) {
   try {
     const res = await fetchComTimeout(
