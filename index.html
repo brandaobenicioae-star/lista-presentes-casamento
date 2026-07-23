@@ -323,211 +323,6 @@
 
   .loading-text { text-align: center; font-size: 14px; color: #8a8578; padding: 60px 0; }
 
-  /* ---------- Hero estilo convite de casamento ---------- */
-  .hero-wed {
-    position: relative;
-    text-align: center;
-    padding: 56px 24px 40px;
-    background:
-      radial-gradient(ellipse at top left, rgba(212,175,55,0.08), transparent 55%),
-      radial-gradient(ellipse at bottom right, rgba(143,151,121,0.10), transparent 55%),
-      var(--champagne);
-    border-bottom: 1px solid var(--border);
-    overflow: hidden;
-  }
-  .hero-wed::before, .hero-wed::after {
-    content: "";
-    position: absolute;
-    width: 130px; height: 130px;
-    border: 1px solid rgba(212,175,55,0.35);
-    border-radius: 40% 60% 55% 45% / 45% 40% 60% 55%;
-  }
-  .hero-wed::before { top: -30px; left: -30px; }
-  .hero-wed::after { bottom: -30px; right: -30px; }
-
-  .divider-heart {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    color: var(--gold);
-    margin: 14px 0;
-  }
-  .divider-heart .line { width: 46px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
-  .divider-heart svg { width: 14px; height: 14px; }
-
-  .hero-invite-text {
-    max-width: 500px; margin: 0 auto 6px;
-    font-size: 13.5px; color: var(--olive);
-    letter-spacing: 0.02em;
-    line-height: 1.7;
-    text-transform: uppercase;
-  }
-
-  h1.couple-names {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 56px;
-    line-height: 1.05;
-    margin: 8px 0 0;
-    color: var(--graphite);
-  }
-  h1.couple-names .amp {
-    display: block;
-    font-size: 30px;
-    color: var(--gold);
-    margin: 4px 0;
-  }
-
-  .vamos-casar {
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin: 8px 0 22px;
-  }
-
-  .info-row {
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    max-width: 560px;
-    margin: 0 auto 22px;
-    flex-wrap: wrap;
-  }
-  .info-item {
-    flex: 1 1 140px;
-    padding: 0 18px;
-    border-right: 1px solid var(--border);
-  }
-  .info-item:last-child { border-right: none; }
-  .info-icon {
-    width: 30px; height: 30px;
-    margin: 0 auto 8px;
-    color: var(--gold);
-  }
-  .info-value {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 21px;
-    font-weight: 600;
-    color: var(--graphite);
-  }
-  .info-label {
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--olive);
-    margin-top: 2px;
-  }
-
-  .endereco-linha {
-    font-size: 13px;
-    color: var(--muted);
-    letter-spacing: 0.02em;
-    margin-bottom: 22px;
-  }
-
-  .countdown {
-    display: flex; justify-content: center; gap: 14px;
-    max-width: 420px; margin: 0 auto 8px;
-    flex-wrap: wrap;
-  }
-  .countdown-box {
-    background: #fff;
-    border: 1px solid var(--card-border);
-    border-radius: 14px;
-    padding: 12px 16px;
-    min-width: 66px;
-  }
-  .countdown-num {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--gold);
-    line-height: 1;
-  }
-  .countdown-label {
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-top: 4px;
-  }
-
-  .recado-final {
-    max-width: 480px; margin: 20px auto 0;
-    font-size: 13.5px; color: var(--muted); line-height: 1.7;
-  }
-  .recado-final .assinatura {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    color: var(--olive);
-    font-size: 17px;
-    margin-top: 10px;
-    display: block;
-  }
-
-  /* ---------- Seção de hospedagem ---------- */
-  .hospedagem-section {
-    max-width: 960px; margin: 0 auto; padding: 8px 24px 48px;
-  }
-  .hospedagem-titulo {
-    text-align: center; margin-bottom: 6px;
-  }
-  .hospedagem-titulo .eyebrow { margin-bottom: 4px; }
-  .hospedagem-titulo h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 30px;
-    margin: 0 0 8px;
-    color: var(--graphite);
-  }
-  .hospedagem-sub {
-    text-align: center;
-    font-size: 13.5px;
-    color: var(--muted);
-    max-width: 480px;
-    margin: 0 auto 28px;
-    line-height: 1.6;
-  }
-  .hospedagem-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 20px;
-  }
-  .hospedagem-card {
-    background: #fff;
-    border: 1px solid var(--card-border);
-    border-radius: 16px;
-    padding: 22px;
-  }
-  .hospedagem-card .htag {
-    font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
-    color: var(--gold); margin-bottom: 8px; display: block;
-  }
-  .hospedagem-card h4 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 21px; margin: 0 0 8px; color: var(--graphite);
-  }
-  .hospedagem-card p {
-    font-size: 13px; color: var(--muted); line-height: 1.6; margin: 0 0 14px;
-  }
-  .hospedagem-card a.link {
-    font-size: 12.5px;
-    color: var(--olive);
-    border: 1px solid var(--border);
-    padding: 7px 12px;
-    border-radius: 8px;
-    text-decoration: none;
-    display: inline-block;
-  }
-  .hospedagem-card a.link:hover { background: var(--tag-bg); }
-
-  @media (max-width: 480px) {
-    h1.couple-names { font-size: 40px; }
-    h1.couple-names .amp { font-size: 22px; }
-    .info-item { flex: 1 1 100px; padding: 0 10px; border-right: none; }
-    .countdown-box { min-width: 56px; padding: 10px 12px; }
-    .countdown-num { font-size: 22px; }
-  }
-
   @media (max-width: 480px) {
     h1.title { font-size: 36px; }
   }
@@ -535,86 +330,16 @@
 </head>
 <body>
 
-<header class="hero-wed">
+<header class="hero">
   <div class="monogram">D &amp; E</div>
-
-  <p class="hero-invite-text">É com o coração cheio de amor<br/>que convidamos você para<br/>o dia mais especial das nossas vidas.</p>
-
-  <div class="divider-heart">
-    <span class="line"></span>
-    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-10-9.2C.4 8.4 2 5 5.5 5c2 0 3.4 1.1 4.2 2.3C10.5 6.1 11.9 5 13.9 5 17.4 5 19 8.4 17.5 11.8 15 16.4 12 21 12 21z"/></svg>
-    <span class="line"></span>
-  </div>
-
-  <h1 class="couple-names">Domingos<span class="amp">&amp;</span>Élida</h1>
-  <p class="vamos-casar">Vamos nos casar!</p>
-
-  <div class="divider-heart">
-    <span class="line"></span>
-    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-10-9.2C.4 8.4 2 5 5.5 5c2 0 3.4 1.1 4.2 2.3C10.5 6.1 11.9 5 13.9 5 17.4 5 19 8.4 17.5 11.8 15 16.4 12 21 12 21z"/></svg>
-    <span class="line"></span>
-  </div>
-
-  <div class="info-row">
-    <div class="info-item">
-      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M9 15.5l1.4 1.4L15 13" /></svg>
-      <div class="info-value">15/08/2026</div>
-      <div class="info-label">Data</div>
-    </div>
-    <div class="info-item">
-      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-      <div class="info-value">10:30hs</div>
-      <div class="info-label">Horário</div>
-    </div>
-    <div class="info-item">
-      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s7-6.5 7-11.5A7 7 0 1 0 5 9.5C5 14.5 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
-      <div class="info-value">Mariú Garden</div>
-      <div class="info-label">Tianguá</div>
-    </div>
-  </div>
-
-  <p class="endereco-linha">R. Ver. Manoel Frota, 1000 — Centro, Tianguá</p>
-
-  <div class="countdown" id="countdown">
-    <div class="countdown-box"><div class="countdown-num" id="cd-dias">--</div><div class="countdown-label">Dias</div></div>
-    <div class="countdown-box"><div class="countdown-num" id="cd-horas">--</div><div class="countdown-label">Horas</div></div>
-    <div class="countdown-box"><div class="countdown-num" id="cd-min">--</div><div class="countdown-label">Min</div></div>
-    <div class="countdown-box"><div class="countdown-num" id="cd-seg">--</div><div class="countdown-label">Seg</div></div>
-  </div>
-
-  <p class="recado-final">
-    Que este dia seja o começo da nossa maior aventura: construir um lar, compartilhar sonhos e caminhar juntos, lado a lado, por toda a vida.
-    <span class="assinatura">Mal podemos esperar para celebrar o amor com vocês!</span>
-  </p>
+  <p class="eyebrow">15 de Agosto de 2026</p>
+  <h1 class="title">Nossa Lista de Presentes</h1>
+  <p class="subtitle">Sua presença é o nosso maior presente. Se desejar nos presentear, preparamos esta lista com muito carinho — escolha algo e deixe uma mensagem para nós.</p>
+  <a id="linkHospedagem" href="#" target="_blank" rel="noopener"
+     style="display:inline-block; margin-top:20px; font-family:'Inter',sans-serif; font-size:12px; color:#8F9779; border:1px solid #E9E2D6; border-radius:999px; padding:8px 18px; text-decoration:none;">
+     🏨 Precisa de hospedagem? Ver hotéis próximos
+  </a>
 </header>
-
-<section class="hospedagem-section" id="hospedagemSection">
-  <div class="hospedagem-titulo">
-    <p class="eyebrow">Para quem vem de fora</p>
-    <h2>Sugestões de Hospedagem</h2>
-  </div>
-  <p class="hospedagem-sub">Selecionamos algumas opções próximas ao local da cerimônia em Tianguá, para deixar sua estadia ainda mais tranquila.</p>
-  <div class="hospedagem-grid" id="hospedagemGrid">
-    <div class="hospedagem-card">
-      <span class="htag">Próximo ao local</span>
-      <h4>Pousada Recanto Tianguá</h4>
-      <p>Ambiente aconchegante a poucos minutos do Mariú Garden, ótima opção para famílias.</p>
-      <a class="link" href="#" target="_blank">Ver detalhes ↗</a>
-    </div>
-    <div class="hospedagem-card">
-      <span class="htag">Centro da cidade</span>
-      <h4>Hotel Serra Grande</h4>
-      <p>Bem localizado no centro de Tianguá, com fácil acesso aos principais pontos da cidade.</p>
-      <a class="link" href="#" target="_blank">Ver detalhes ↗</a>
-    </div>
-    <div class="hospedagem-card">
-      <span class="htag">Custo-benefício</span>
-      <h4>Pousada Vale Verde</h4>
-      <p>Opção mais econômica, ideal para quem busca praticidade e conforto para poucas noites.</p>
-      <a class="link" href="#" target="_blank">Ver detalhes ↗</a>
-    </div>
-  </div>
-</section>
 
 <div id="storageWarning" style="display:none; max-width:960px; margin:0 auto; padding:0 24px 12px;">
   <div style="background:#F3ECEA; border:1px solid #e6c9c5; color:#9c6b63; border-radius:12px; padding:10px 16px; font-size:12px; text-align:center;">
@@ -654,21 +379,22 @@
 //
 // TROQUE AS DUAS LINHAS ABAIXO pelos dados do seu projeto Supabase
 // (Project Settings > API no painel do Supabase).
-// IMPORTANTE: SUPABASE_URL deve conter APENAS a URL base do projeto,
-// sem "/rest/v1/" no final — os caminhos completos (/rest/v1/..., 
-// /auth/v1/...) já são montados nas funções abaixo. Deixar o "/rest/v1/"
-// aqui duplicava o caminho (.../rest/v1/rest/v1/...) e causava 404 em
-// todas as chamadas, o que gerava o aviso de "Não foi possível conectar".
 // ============================================================
-const SUPABASE_URL = "https://yrbkwpgqeerqhhxsnrno.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_N2u-__7UfmlbXz7ufXtZVw_pSb1IQ87";
+const SUPABASE_URL = "https://SEU-PROJETO.supabase.co";
+const SUPABASE_ANON_KEY = "SUA-CHAVE-ANON-PUBLIC-AQUI";
 
 const STORAGE_KEY = "presentes-lista"; // não precisa alterar
+const MURAL_BUCKET = "mural";
+
+// Endereço/cidade do evento para a busca de hospedagem no Google.
+// TROQUE pelo endereço real antes de publicar.
+const ENDERECO_HOSPEDAGEM = "Fortaleza, CE";
+
 let presentes = [];
+let mural = [];
 let abaAtual = "disponiveis";
 let modoAdmin = false;
 let adminToken = null; // token de sessão do usuário admin logado (em memória, some ao recarregar)
-let dadosReais = false; // true somente depois que os dados vieram do Supabase (ids reais/uuid)
 
 // Lista usada apenas como fallback visual imediato enquanto o Supabase
 // responde, ou caso a conexão falhe por completo.
@@ -746,7 +472,6 @@ async function carregarPresentes() {
     if (!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
     presentes = data;
-    dadosReais = true;
     renderizarTudo();
     esconderAvisoConexao();
   } catch (e) {
@@ -760,14 +485,14 @@ async function carregarPresentes() {
 // reservar_presente() dentro do banco (ver schema.sql), que só marca o
 // item como reservado se ele ainda estiver 'disponivel' no exato momento
 // da transação. Aqui só chamamos essa função e mostramos o resultado.
-async function reservarPresente(id) {
+async function reservarPresente(id, nome, mensagem) {
   try {
     const res = await fetchComTimeout(
       `${SUPABASE_URL}/rest/v1/rpc/reservar_presente`,
       {
         method: "POST",
         headers: headersPublicos(),
-        body: JSON.stringify({ p_id: id }),
+        body: JSON.stringify({ p_id: id, p_nome: nome, p_mensagem: mensagem }),
       },
       8000
     );
@@ -808,11 +533,13 @@ function renderizarTabs() {
   document.getElementById("tabs").innerHTML = `
     <button class="tab-btn ${abaAtual === 'disponiveis' ? 'active' : ''}" onclick="mudarAba('disponiveis')">Presentes Disponíveis (${disponiveis})</button>
     <button class="tab-btn ${abaAtual === 'reservados' ? 'active' : ''}" onclick="mudarAba('reservados')">Já Reservados (${reservados})</button>
+    <button class="tab-btn ${abaAtual === 'mural' ? 'active' : ''}" onclick="mudarAba('mural')">Mural de Fotos (${mural.length})</button>
   `;
 }
 
 function mudarAba(aba) {
   abaAtual = aba;
+  if (aba === "mural" && mural.length === 0) carregarMural();
   renderizarTudo();
 }
 
@@ -823,6 +550,10 @@ function escapeHtml(str) {
 }
 
 function renderizarGrid() {
+  if (abaAtual === "mural") {
+    renderizarMural();
+    return;
+  }
   const lista = presentes.filter(p => p.status === (abaAtual === "disponiveis" ? "disponivel" : "reservado"));
   const el = document.getElementById("content");
 
@@ -834,17 +565,191 @@ function renderizarGrid() {
   el.innerHTML = `<div class="grid">${lista.map(cardHtml).join("")}</div>`;
 }
 
+// ---------- MURAL DE FOTOS ----------
+async function carregarMural() {
+  try {
+    const res = await fetchComTimeout(
+      `${SUPABASE_URL}/rest/v1/mural_fotos?select=*&order=criado_em.desc`,
+      { headers: headersPublicos() },
+      8000
+    );
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    mural = await res.json();
+  } catch (e) {
+    console.error("Falha ao carregar o mural:", e.message);
+  }
+  if (abaAtual === "mural") renderizarTudo();
+}
+
+function renderizarMural() {
+  const el = document.getElementById("content");
+  const botaoAdicionar = `
+    <div style="text-align:center; margin-bottom:28px;">
+      <button class="btn btn-primary" style="width:auto; padding:11px 24px; display:inline-flex;" onclick="abrirModalFoto()">📷 Adicionar foto ao mural</button>
+    </div>`;
+
+  if (mural.length === 0) {
+    el.innerHTML = botaoAdicionar + `<p class="empty-state">Nenhuma foto no mural ainda — seja o primeiro a postar!</p>`;
+    return;
+  }
+
+  el.innerHTML = botaoAdicionar + `<div class="grid">${mural.map(fotoMuralHtml).join("")}</div>`;
+}
+
+function fotoMuralHtml(f) {
+  const legenda = (f.nome_pessoa || f.mensagem)
+    ? `<div style="padding:12px 4px 0;">
+         ${f.nome_pessoa ? `<div style="font-family:'Cormorant Garamond',serif; font-size:16px; color:var(--graphite);">${escapeHtml(f.nome_pessoa)}</div>` : ""}
+         ${f.mensagem ? `<div style="font-size:12px; color:var(--muted); margin-top:2px;">${escapeHtml(f.mensagem)}</div>` : ""}
+       </div>`
+    : "";
+  const excluirBtn = modoAdmin
+    ? `<button onclick="excluirFotoMural('${f.id}', '${escapeHtml(f.url_foto)}')" title="Excluir foto"
+         style="position:absolute; top:8px; right:8px; width:28px; height:28px; border-radius:50%; border:none; background:rgba(44,62,80,0.75); color:#fff; cursor:pointer; font-size:14px; line-height:1;">✕</button>`
+    : "";
+
+  return `
+    <div class="card" style="padding:10px;">
+      <div style="position:relative; width:100%; aspect-ratio:1; border-radius:12px; overflow:hidden; background:#F3F0E6;">
+        <img src="${escapeHtml(f.url_foto)}" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;" />
+        ${excluirBtn}
+      </div>
+      ${legenda}
+    </div>
+  `;
+}
+
+function abrirModalFoto() {
+  document.getElementById("modalRoot").innerHTML = `
+    <div class="overlay">
+      <div class="modal">
+        <button class="modal-close" onclick="fecharModal()">✕</button>
+        <div class="modal-eyebrow">✦ Mural de fotos</div>
+        <h3>Adicionar uma foto</h3>
+        <div id="fotoErro"></div>
+        <label class="field-label">Escolha uma foto</label>
+        <input type="file" id="inputFoto" accept="image/*" style="margin-bottom:16px;" />
+        <label class="field-label">Seu nome (opcional)</label>
+        <input type="text" id="inputFotoNome" placeholder="Quem está postando" />
+        <label class="field-label">Mensagem (opcional)</label>
+        <textarea id="inputFotoMensagem" rows="2" placeholder="Um recadinho para acompanhar a foto"></textarea>
+        <button class="btn btn-confirm" id="btnEnviarFoto" onclick="enviarFotoDoModal()">📷 Publicar no mural</button>
+      </div>
+    </div>
+  `;
+}
+
+async function enviarFotoDoModal() {
+  const input = document.getElementById("inputFoto");
+  const file = input.files && input.files[0];
+  const nome = document.getElementById("inputFotoNome").value.trim();
+  const mensagem = document.getElementById("inputFotoMensagem").value.trim();
+  const btn = document.getElementById("btnEnviarFoto");
+
+  if (!file) {
+    document.getElementById("fotoErro").innerHTML = `<div class="form-error">Escolha uma foto antes de publicar.</div>`;
+    return;
+  }
+  if (file.size > 8 * 1024 * 1024) {
+    document.getElementById("fotoErro").innerHTML = `<div class="form-error">Essa foto é maior que 8MB. Escolha uma imagem menor.</div>`;
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerText = "Enviando...";
+
+  const resultado = await enviarFotoMural(file, nome, mensagem);
+  if (resultado.sucesso) {
+    fecharModal();
+    mostrarToast("success", "Foto adicionada ao mural!");
+    await carregarMural();
+  } else {
+    document.getElementById("fotoErro").innerHTML = `<div class="form-error">${escapeHtml(resultado.mensagem)}</div>`;
+    btn.disabled = false;
+    btn.innerText = "📷 Publicar no mural";
+  }
+}
+
+async function enviarFotoMural(file, nome, mensagem) {
+  try {
+    const nomeArquivo = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
+
+    const uploadRes = await fetchComTimeout(
+      `${SUPABASE_URL}/storage/v1/object/${MURAL_BUCKET}/${nomeArquivo}`,
+      {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: "Bearer " + (adminToken || SUPABASE_ANON_KEY),
+          "Content-Type": file.type || "application/octet-stream",
+        },
+        body: file,
+      },
+      20000
+    );
+
+    if (!uploadRes.ok) {
+      let detalhe = "";
+      try { const corpo = await uploadRes.json(); detalhe = corpo.message || ""; } catch (e) {}
+      console.error("Falha no upload da foto — status " + uploadRes.status, detalhe);
+      return { sucesso: false, mensagem: detalhe ? `Não foi possível enviar a foto (${detalhe}).` : "Não foi possível enviar a foto. Tente novamente." };
+    }
+
+    const urlPublica = `${SUPABASE_URL}/storage/v1/object/public/${MURAL_BUCKET}/${nomeArquivo}`;
+
+    const insertRes = await fetchComTimeout(
+      `${SUPABASE_URL}/rest/v1/mural_fotos`,
+      {
+        method: "POST",
+        headers: headersPublicos(),
+        body: JSON.stringify({ url_foto: urlPublica, nome_pessoa: nome || null, mensagem: mensagem || null }),
+      },
+      8000
+    );
+
+    if (!insertRes.ok) {
+      let detalhe = "";
+      try { const corpo = await insertRes.json(); detalhe = corpo.message || ""; } catch (e) {}
+      return { sucesso: false, mensagem: detalhe ? `Foto enviada, mas não salvou os detalhes (${detalhe}).` : "Foto enviada, mas não foi possível salvar os detalhes." };
+    }
+
+    return { sucesso: true };
+  } catch (e) {
+    return { sucesso: false, mensagem: "Erro de conexão ao enviar a foto." };
+  }
+}
+
+async function excluirFotoMural(id, urlFoto) {
+  if (!confirm("Remover esta foto do mural? Essa ação não pode ser desfeita.")) return;
+  try {
+    const nomeArquivo = urlFoto.split(`/public/${MURAL_BUCKET}/`)[1];
+    if (nomeArquivo) {
+      await fetchComTimeout(
+        `${SUPABASE_URL}/storage/v1/object/${MURAL_BUCKET}/${nomeArquivo}`,
+        { method: "DELETE", headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + (adminToken || SUPABASE_ANON_KEY) } },
+        8000
+      );
+    }
+    await fetchComTimeout(
+      `${SUPABASE_URL}/rest/v1/mural_fotos?id=eq.${id}`,
+      { method: "DELETE", headers: headersAdmin() },
+      8000
+    );
+    await carregarMural();
+  } catch (e) {
+    mostrarToast("error", "Erro de conexão ao excluir a foto.");
+  }
+}
+
 function cardHtml(p) {
   const disponivel = p.status === "disponivel";
   const linkHtml = p.link_sugestao_compra ? `<a href="${escapeHtml(p.link_sugestao_compra)}" target="_blank" class="link">ver sugestão ↗</a>` : "";
 
   const acaoHtml = disponivel
-    ? (dadosReais
-        ? `<button class="btn btn-primary" onclick="abrirModalReserva('${p.id}')">🎁 Presentear</button>`
-        : `<button class="btn btn-primary" disabled>Carregando...</button>`)
-    : `<div class="reserved-note">Já reservado com carinho 💛</div>`;
+    ? `<button class="btn btn-primary" onclick="abrirModalReserva('${p.id}')">🎁 Presentear</button>`
+    : `<div class="reserved-note">Presenteado por ${escapeHtml(p.reservado_por || '')}</div>`;
 
-  const adminHtml = (modoAdmin && dadosReais) ? `
+  const adminHtml = modoAdmin ? `
     <div class="admin-actions">
       <button class="btn btn-secondary" onclick="abrirModalEdicao('${p.id}')">Editar</button>
       ${!disponivel ? `<button class="btn btn-secondary" onclick="liberarPresente('${p.id}')">Liberar</button>` : ""}
@@ -880,6 +785,10 @@ function abrirModalReserva(id) {
         <div class="modal-eyebrow">✦ Confirmar presente</div>
         <h3>${escapeHtml(presente.nome)}</h3>
         <div id="formErro"></div>
+        <label class="field-label">Nome completo (opcional)</label>
+        <input type="text" id="inputNome" placeholder="Como quer ser identificado(a) na lista" />
+        <label class="field-label">Mensagem de carinho aos noivos</label>
+        <textarea id="inputMensagem" rows="3" placeholder="Deixe um recado para o casal (opcional)"></textarea>
         <label class="checkbox-row">
           <input type="checkbox" id="inputConfirma" onchange="atualizarBotaoConfirmar()" />
           Confirmo que vou presentear com este item e entendo que ele sairá da lista para os demais convidados.
@@ -888,6 +797,7 @@ function abrirModalReserva(id) {
       </div>
     </div>
   `;
+  document.getElementById("inputNome").addEventListener("input", atualizarBotaoConfirmar);
 }
 
 function atualizarBotaoConfirmar() {
@@ -901,14 +811,18 @@ function fecharModal() {
 }
 
 async function confirmarReserva(id) {
+  const nomeDigitado = document.getElementById("inputNome").value.trim();
+  const nome = nomeDigitado || "Convidado";
+  const mensagem = document.getElementById("inputMensagem").value.trim();
   const btn = document.getElementById("btnConfirmar");
   btn.disabled = true;
   btn.innerText = "Confirmando...";
 
-  const resultado = await reservarPresente(id);
+  const resultado = await reservarPresente(id, nome, mensagem);
   if (resultado.sucesso) {
     fecharModal();
-    mostrarToast("success", "Presente reservado com carinho!");
+    const saudacao = nomeDigitado ? `, ${nomeDigitado.split(" ")[0]}` : "";
+    mostrarToast("success", `Presente reservado com carinho${saudacao}!`);
     renderizarTudo();
   } else {
     document.getElementById("formErro").innerHTML = `<div class="form-error">${escapeHtml(resultado.mensagem)}</div>`;
@@ -1082,7 +996,7 @@ async function liberarPresente(id) {
   try {
     const res = await fetchComTimeout(
       `${SUPABASE_URL}/rest/v1/presentes?id=eq.${id}`,
-      { method: "PATCH", headers: headersAdmin(), body: JSON.stringify({ status: "disponivel" }) },
+      { method: "PATCH", headers: headersAdmin(), body: JSON.stringify({ status: "disponivel", reservado_por: null, mensagem_noivos: null, reservado_em: null }) },
       8000
     );
     if (!res.ok) { mostrarToast("error", "Não foi possível liberar. Verifique sua permissão de admin."); return; }
@@ -1092,42 +1006,9 @@ async function liberarPresente(id) {
   }
 }
 
-// ---------- CONTAGEM REGRESSIVA ----------
-const DATA_CASAMENTO = new Date("2026-08-15T10:30:00-03:00").getTime();
-
-function atualizarContagem() {
-  const agora = Date.now();
-  const diff = DATA_CASAMENTO - agora;
-
-  const elDias = document.getElementById("cd-dias");
-  const elHoras = document.getElementById("cd-horas");
-  const elMin = document.getElementById("cd-min");
-  const elSeg = document.getElementById("cd-seg");
-  if (!elDias) return; // seção ainda não renderizada
-
-  if (diff <= 0) {
-    elDias.innerText = "0";
-    elHoras.innerText = "0";
-    elMin.innerText = "0";
-    elSeg.innerText = "0";
-    return;
-  }
-
-  const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const min = Math.floor((diff / (1000 * 60)) % 60);
-  const seg = Math.floor((diff / 1000) % 60);
-
-  elDias.innerText = dias;
-  elHoras.innerText = String(horas).padStart(2, "0");
-  elMin.innerText = String(min).padStart(2, "0");
-  elSeg.innerText = String(seg).padStart(2, "0");
-}
-
-atualizarContagem();
-setInterval(atualizarContagem, 1000);
-
 // ---------- INIT ----------
+document.getElementById("linkHospedagem").href =
+  "https://www.google.com/search?q=" + encodeURIComponent("hotéis próximos a " + ENDERECO_HOSPEDAGEM);
 carregarPresentes();
 </script>
 </body>
