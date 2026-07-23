@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Nossa Lista de Presentes — 15 de Agosto de 2026</title>
+<title>Domingos & Élida — 15 de Agosto de 2026</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap');
 
@@ -32,36 +32,151 @@
 
   .font-display { font-family: 'Cormorant Garamond', serif; }
 
+  /* ---------- HERO / CONVITE ---------- */
   header.hero {
     border-bottom: 1px solid var(--border);
     text-align: center;
-    padding: 64px 24px 56px;
+    padding: 56px 20px 40px;
+    background: radial-gradient(ellipse at top, #FBF6EC 0%, var(--champagne) 60%);
   }
 
-  .monogram {
-    margin: 0 auto 24px;
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--gold);
-    color: var(--olive);
-    font-family: 'Cormorant Garamond', serif;
+  .ornament {
     font-size: 20px;
+    color: var(--gold);
+    margin: 18px 0;
+    letter-spacing: 0.3em;
   }
 
-  .eyebrow {
-    letter-spacing: 0.25em;
-    font-size: 11px;
+  .invite-intro {
+    max-width: 480px;
+    margin: 0 auto;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--olive);
-    margin-bottom: 12px;
+    color: var(--muted);
+    line-height: 1.9;
   }
 
-  h1.title {
+  .names {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 48px;
-    margin: 0 0 16px;
+    line-height: 1.05;
+    margin: 10px 0;
+  }
+  .names .nome {
+    font-size: 58px;
+    display: block;
+    color: var(--graphite);
+  }
+  .names .e {
+    font-size: 28px;
+    display: block;
+    color: var(--gold);
+    font-style: normal;
+    margin: 4px 0;
+  }
+
+  .vamos-casar {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--olive);
+    margin: 14px 0 4px;
+  }
+
+  /* Cronômetro */
+  .countdown {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 28px auto 8px;
+  }
+  .countdown-box {
+    background: #fff;
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 12px 16px;
+    min-width: 72px;
+  }
+  .countdown-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    color: var(--graphite);
+    line-height: 1;
+  }
+  .countdown-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Info cards: data / horário / local */
+  .info-row {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    max-width: 520px;
+    margin: 32px auto 20px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0;
+  }
+  .info-item {
+    flex: 1;
+    min-width: 140px;
+    padding: 0 12px;
+    border-right: 1px solid var(--border);
+  }
+  .info-item:last-child { border-right: none; }
+  .info-icon { font-size: 20px; color: var(--gold); margin-bottom: 6px; }
+  .info-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--graphite);
+  }
+  .info-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--olive);
+    margin-top: 2px;
+  }
+
+  .endereco {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    margin: 4px 0 20px;
+  }
+
+  .mensagem-convite {
+    max-width: 480px;
+    margin: 0 auto 8px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .mensagem-destaque {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--gold);
+    margin: 14px 0;
+  }
+  .rsvp-nota {
+    max-width: 460px;
+    margin: 20px auto 0;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
   }
 
   .subtitle {
@@ -71,9 +186,22 @@
     color: var(--muted);
   }
 
+  .presentes-intro {
+    max-width: 640px;
+    margin: 44px auto 0;
+    text-align: center;
+    padding: 0 24px;
+  }
+  .presentes-intro h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 32px;
+    margin: 0 0 10px;
+  }
+
   .tabs {
     max-width: 960px;
-    margin: 40px auto 8px;
+    margin: 28px auto 8px;
     padding: 0 24px;
     display: flex;
     justify-content: center;
@@ -285,6 +413,8 @@
     box-shadow: 0 8px 24px rgba(0,0,0,.15);
     z-index: 60;
     animation: fadeUp .25s ease;
+    max-width: 90vw;
+    text-align: center;
   }
   .toast.success { background: var(--graphite); color: var(--champagne); }
   .toast.error { background: var(--error); color: #fff; }
@@ -323,27 +453,92 @@
 
   .loading-text { text-align: center; font-size: 14px; color: #8a8578; padding: 60px 0; }
 
+  .info-link-card {
+    background: #fff;
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 22px;
+  }
+  .info-link-card .distancia {
+    font-size: 12px; color: var(--muted); margin: 4px 0 14px;
+  }
+
+  #connWarning {
+    display: none;
+    max-width: 960px; margin: 0 auto; padding: 0 24px 12px;
+  }
+  #connWarning .box {
+    background: #F3ECEA; border: 1px solid #e6c9c5; color: #9c6b63;
+    border-radius: 12px; padding: 12px 16px; font-size: 12px; text-align: center;
+  }
+  #connWarning button {
+    margin-left: 10px; background: #9c6b63; color: #fff; border: none;
+    border-radius: 8px; padding: 5px 12px; font-size: 11px; cursor: pointer;
+  }
+
   @media (max-width: 480px) {
-    h1.title { font-size: 36px; }
+    .names .nome { font-size: 42px; }
+    .info-row { flex-direction: column; border: none; padding: 0; gap: 14px; }
+    .info-item { border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 14px; }
+    .info-item:last-child { border-bottom: none; }
   }
 </style>
 </head>
 <body>
 
 <header class="hero">
-  <div class="monogram">D &amp; E</div>
-  <p class="eyebrow">15 de Agosto de 2026</p>
-  <h1 class="title">Nossa Lista de Presentes</h1>
-  <p class="subtitle">Sua presença é o nosso maior presente. Se desejar nos presentear, preparamos esta lista com muito carinho — escolha algo e deixe uma mensagem para nós.</p>
-  <a id="linkHospedagem" href="#" target="_blank" rel="noopener"
-     style="display:inline-block; margin-top:20px; font-family:'Inter',sans-serif; font-size:12px; color:#8F9779; border:1px solid #E9E2D6; border-radius:999px; padding:8px 18px; text-decoration:none;">
-     🏨 Precisa de hospedagem? Ver hotéis próximos
-  </a>
+  <div class="ornament">❦</div>
+  <p class="invite-intro">É com o coração cheio de amor<br>que convidamos você para<br>o dia mais especial das nossas vidas.</p>
+  <div class="ornament">── ♥ ──</div>
+  <div class="names">
+    <span class="nome">Domingos</span>
+    <span class="e">&amp;</span>
+    <span class="nome">Élida</span>
+  </div>
+  <p class="vamos-casar">Vamos nos casar!</p>
+
+  <div class="countdown" id="countdown">
+    <div class="countdown-box"><div class="countdown-num" id="cdDias">--</div><div class="countdown-label">Dias</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="cdHoras">--</div><div class="countdown-label">Horas</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="cdMinutos">--</div><div class="countdown-label">Minutos</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="cdSegundos">--</div><div class="countdown-label">Segundos</div></div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-item">
+      <div class="info-icon">📅</div>
+      <div class="info-value">15/08/2026</div>
+      <div class="info-label">Data</div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">🕐</div>
+      <div class="info-value">10:30h</div>
+      <div class="info-label">Horário</div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">📍</div>
+      <div class="info-value">Mariú Garden</div>
+      <div class="info-label">Tianguá</div>
+    </div>
+  </div>
+
+  <p class="endereco">R. Ver. Manoel Frota, 1000 - Centro</p>
+
+  <p class="mensagem-convite">Que este dia seja o começo da nossa maior aventura: construir um lar, compartilhar sonhos e caminhar juntos, lado a lado, por toda a vida.</p>
+  <p class="mensagem-destaque">Mal podemos esperar para celebrar o amor com vocês!</p>
+
+  <p class="rsvp-nota">Como nosso casamento será realizado em Tianguá, por favor, confirme sua presença até o dia 25/07/2026, para que possamos organizar tudo com carinho.</p>
 </header>
 
-<div id="storageWarning" style="display:none; max-width:960px; margin:0 auto; padding:0 24px 12px;">
-  <div style="background:#F3ECEA; border:1px solid #e6c9c5; color:#9c6b63; border-radius:12px; padding:10px 16px; font-size:12px; text-align:center;">
-    Não foi possível conectar ao servidor agora. A lista abaixo pode estar desatualizada — tente recarregar a página em instantes.
+<div class="presentes-intro">
+  <h2>Nossa Lista de Presentes</h2>
+  <p class="subtitle">Sua presença é o nosso maior presente. Se desejar nos presentear, preparamos esta lista com muito carinho — escolha algo e deixe uma mensagem para nós.</p>
+</div>
+
+<div id="connWarning">
+  <div class="box">
+    Não foi possível conectar ao servidor agora. A lista pode estar desatualizada.
+    <button onclick="tentarNovamenteConexao()">Tentar novamente</button>
   </div>
 </div>
 
@@ -367,60 +562,106 @@
   <button class="admin-link" id="adminToggle" onclick="abrirLoginAdmin()">Área dos noivos</button>
 </div>
 
-<footer>Com carinho, até agosto de 2026. 💛</footer>
+<footer>Com carinho, Domingos &amp; Élida. 💛</footer>
 
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
 
 <script>
 // ============================================================
-// LISTA DE PRESENTES — versão para hospedagem estática
-// (GitHub + Vercel), com persistência real via Supabase.
+// SITE DO CASAMENTO — Domingos & Élida — 15/08/2026
+// Hospedagem estática (GitHub + Vercel), persistência via Supabase.
 //
 // TROQUE AS DUAS LINHAS ABAIXO pelos dados do seu projeto Supabase
-// (Project Settings > API no painel do Supabase).
+// (Project Settings > API no painel do Supabase). Aceita tanto a URL
+// "https://SEUPROJETO.supabase.co" quanto a URL completa terminando
+// em "/rest/v1/" — o código normaliza sozinho.
 // ============================================================
-const SUPABASE_URL = "https://yrbkwpgqeerqhhxsnrno.supabase.co/rest/v1/";
+const SUPABASE_URL_BRUTO = "https://yrbkwpgqeerqhhxsnrno.supabase.co/rest/v1/";
 const SUPABASE_ANON_KEY = "sb_publishable_N2u-__7UfmlbXz7ufXtZVw_pSb1IQ87";
 
-const STORAGE_KEY = "presentes-lista"; // não precisa alterar
-const MURAL_BUCKET = "mural";
+// Normaliza a URL — remove "/rest/v1" e barras finais, não importa
+// como foi colada. Isso evita o erro de conexão mais comum: montar
+// URLs erradas tipo ".../rest/v1//rest/v1/presentes".
+const SUPABASE_URL = SUPABASE_URL_BRUTO.trim().replace(/\/rest\/v1\/?$/i, "").replace(/\/+$/, "");
 
-// Endereço/cidade do evento para a busca de hospedagem no Google.
-// TROQUE pelo endereço real antes de publicar.
-const ENDERECO_HOSPEDAGEM = "Fortaleza, CE";
+const MURAL_BUCKET = "mural";
 
 let presentes = [];
 let mural = [];
 let abaAtual = "disponiveis";
 let modoAdmin = false;
 let adminToken = null; // token de sessão do usuário admin logado (em memória, some ao recarregar)
+let tentativasReconexao = 0;
+let timerReconexao = null;
 
 // Lista usada apenas como fallback visual imediato enquanto o Supabase
 // responde, ou caso a conexão falhe por completo.
 const PRESENTES_SEED = [
-  { id: "1", nome: "Batedeira", descricao: "Para os bolos e massas da casa nova.", categoria: "Cozinha", preco_estimado: 350, link_sugestao_compra: "", status: "disponivel" },
-  { id: "2", nome: "Processador de Alimentos", descricao: "Agiliza o dia a dia na cozinha.", categoria: "Cozinha", preco_estimado: 420, link_sugestao_compra: "", status: "disponivel" },
-  { id: "3", nome: "Cafeteira Elétrica", descricao: "Para os cafés da manhã de todos os dias.", categoria: "Cozinha", preco_estimado: 280, link_sugestao_compra: "", status: "disponivel" },
-  { id: "4", nome: "Faqueiro", descricao: "Conjunto completo de talheres para a mesa nova.", categoria: "Mesa", preco_estimado: 380, link_sugestao_compra: "", status: "disponivel" },
-  { id: "5", nome: "Jogo de Panelas Antiaderentes", descricao: "Conjunto completo para o preparo do dia a dia.", categoria: "Cozinha", preco_estimado: 650, link_sugestao_compra: "", status: "disponivel" },
-  { id: "6", nome: "Frigideiras Antiaderentes", descricao: "Diferentes tamanhos para cada receita.", categoria: "Cozinha", preco_estimado: 320, link_sugestao_compra: "", status: "disponivel" },
-  { id: "7", nome: "Jogo de Pratos Fundos", descricao: "Conjunto para as refeições em família.", categoria: "Mesa", preco_estimado: 220, link_sugestao_compra: "", status: "disponivel" },
-  { id: "8", nome: "Jogo de Pratos de Sobremesa", descricao: "Para fechar as refeições com doçura.", categoria: "Mesa", preco_estimado: 180, link_sugestao_compra: "", status: "disponivel" },
-  { id: "9", nome: "Jogo de Taças para Vinho", descricao: "Para os brindes e jantares especiais.", categoria: "Mesa", preco_estimado: 250, link_sugestao_compra: "", status: "disponivel" },
-  { id: "10", nome: "Kit para Drinks", descricao: "Coqueteleira, coador, mini balde de gelo e macerador.", categoria: "Bar", preco_estimado: 300, link_sugestao_compra: "", status: "disponivel" },
-  { id: "11", nome: "Facas de Chef", descricao: "Conjunto de facas profissionais para a cozinha.", categoria: "Cozinha", preco_estimado: 400, link_sugestao_compra: "", status: "disponivel" },
-  { id: "12", nome: "Jogo de Xícaras de Café", descricao: "Xícaras pequenas para o cafezinho de todo dia.", categoria: "Mesa", preco_estimado: 150, link_sugestao_compra: "", status: "disponivel" },
-  { id: "13", nome: "Garrafa Térmica para Café", descricao: "Para manter o café quentinho por mais tempo.", categoria: "Cozinha", preco_estimado: 180, link_sugestao_compra: "", status: "disponivel" },
-  { id: "14", nome: "Jogo de Tigelas", descricao: "Diversos tamanhos para preparar e servir.", categoria: "Cozinha", preco_estimado: 200, link_sugestao_compra: "", status: "disponivel" },
-  { id: "15", nome: "Manta para Cama (Colcha)", descricao: "Para deixar o quarto mais aconchegante.", categoria: "Quarto", preco_estimado: 350, link_sugestao_compra: "", status: "disponivel" },
-  { id: "16", nome: "Jogo de Cama", descricao: "Para noites de sono tranquilas na casa nova.", categoria: "Quarto", preco_estimado: 420, link_sugestao_compra: "", status: "disponivel" },
-  { id: "17", nome: "Jogo de Toalhas de Banho", descricao: "Conjunto macio para o dia a dia.", categoria: "Banho", preco_estimado: 280, link_sugestao_compra: "", status: "disponivel" },
-  { id: "18", nome: "Jogo de Toalhas de Rosto", descricao: "Para completar o banheiro da casa nova.", categoria: "Banho", preco_estimado: 150, link_sugestao_compra: "", status: "disponivel" },
-  { id: "19", nome: "Tábua de Passar Roupa", descricao: "Item essencial para o dia a dia da casa.", categoria: "Casa", preco_estimado: 200, link_sugestao_compra: "", status: "disponivel" },
-  { id: "20", nome: "Sapateira Organizadora", descricao: "Para manter os calçados em ordem.", categoria: "Casa", preco_estimado: 250, link_sugestao_compra: "", status: "disponivel" },
-  { id: "21", nome: "Organizador para Bancada", descricao: "Para deixar a cozinha sempre em ordem.", categoria: "Cozinha", preco_estimado: 130, link_sugestao_compra: "", status: "disponivel" },
+  { id: "1", nome: "Batedeira", descricao: "Para os bolos e massas da casa nova.", categoria: "Cozinha", link_sugestao_compra: "", status: "disponivel" },
+  { id: "2", nome: "Processador de Alimentos", descricao: "Agiliza o dia a dia na cozinha.", categoria: "Cozinha", link_sugestao_compra: "", status: "disponivel" },
+  { id: "3", nome: "Cafeteira Elétrica", descricao: "Para os cafés da manhã de todos os dias.", categoria: "Cozinha", link_sugestao_compra: "", status: "disponivel" },
+  { id: "4", nome: "Faqueiro", descricao: "Conjunto completo de talheres para a mesa nova.", categoria: "Mesa", link_sugestao_compra: "", status: "disponivel" },
+  { id: "5", nome: "Jogo de Panelas Antiaderentes", descricao: "Conjunto completo para o preparo do dia a dia.", categoria: "Cozinha", link_sugestao_compra: "", status: "disponivel" },
+  { id: "6", nome: "Frigideiras Antiaderentes", descricao: "Diferentes tamanhos para cada receita.", categoria: "Cozinha", link_sugestao_compra: "", status: "disponivel" },
+  { id: "7", nome: "Jogo de Pratos Fundos", descricao: "Conjunto para as refeições em família.", categoria: "Mesa", link_sugestao_compra: "", status: "disponivel" },
+  { id: "8", nome: "Jogo de Pratos de Sobremesa", descricao: "Para fechar as refeições com doçura.", categoria: "Mesa", link_sugestao_compra: "", status: "disponivel" },
+  { id: "9", nome: "Jogo de Taças para Vinho", descricao: "Para os brindes e jantares especiais.", categoria: "Mesa", link_sugestao_compra: "", status: "disponivel" },
+  { id: "10", nome: "Kit para Drinks", descricao: "Coqueteleira, coador, mini balde de gelo e macerador.", categoria: "Bar", link_sugestao_compra: "", status: "disponivel" },
+  { id: "11", nome: "Facas de Chef", descricao: "Conjunto de facas profissionais para a cozinha.", categoria: "Cozinha", link_sugestao_compra: "", status: "disponivel" },
+  { id: "12", nome: "Jogo de Xícaras de Café", descricao: "Xícaras pequenas para o cafezinho de todo dia.", categoria: "Mesa", link_sugestao_compra: "", status: "disponivel" },
+  { id: "13", nome: "Garrafa Térmica para Café", descricao: "Para manter o café quentinho por mais tempo.", categoria: "Cozinha", link_sugestao_compra: "", status: "disponivel" },
+  { id: "14", nome: "Jogo de Tigelas", descricao: "Diversos tamanhos para preparar e servir.", categoria: "Cozinha", link_sugestao_compra: "", status: "disponivel" },
+  { id: "15", nome: "Manta para Cama (Colcha)", descricao: "Para deixar o quarto mais aconchegante.", categoria: "Quarto", link_sugestao_compra: "", status: "disponivel" },
+  { id: "16", nome: "Jogo de Cama", descricao: "Para noites de sono tranquilas na casa nova.", categoria: "Quarto", link_sugestao_compra: "", status: "disponivel" },
+  { id: "17", nome: "Jogo de Toalhas de Banho", descricao: "Conjunto macio para o dia a dia.", categoria: "Banho", link_sugestao_compra: "", status: "disponivel" },
+  { id: "18", nome: "Jogo de Toalhas de Rosto", descricao: "Para completar o banheiro da casa nova.", categoria: "Banho", link_sugestao_compra: "", status: "disponivel" },
+  { id: "19", nome: "Tábua de Passar Roupa", descricao: "Item essencial para o dia a dia da casa.", categoria: "Casa", link_sugestao_compra: "", status: "disponivel" },
+  { id: "20", nome: "Sapateira Organizadora", descricao: "Para manter os calçados em ordem.", categoria: "Casa", link_sugestao_compra: "", status: "disponivel" },
+  { id: "21", nome: "Organizador para Bancada", descricao: "Para deixar a cozinha sempre em ordem.", categoria: "Cozinha", link_sugestao_compra: "", status: "disponivel" },
 ];
+
+// Opções de hospedagem — cada uma abre uma pesquisa no Google.
+const HOSPEDAGENS = [
+  { nome: "Hotéis em Tianguá, CE", busca: "hotéis em Tianguá CE" },
+  { nome: "Pousadas em Tianguá, CE", busca: "pousadas em Tianguá CE" },
+  { nome: "Hospedagens próximas à Mariú Garden", busca: "hospedagem próximo Mariú Garden Tianguá CE" },
+  { nome: "Hotéis na Serra da Ibiapaba", busca: "hotéis Serra da Ibiapaba CE" },
+];
+
+// Indicações de turismo num raio de ~50 km — cada uma abre uma pesquisa no Google.
+const TURISMO = [
+  { nome: "Sítio do Bosco", distancia: "No centro de Tianguá", busca: "Sítio do Bosco Tianguá CE" },
+  { nome: "Reserva Natureza Divina", distancia: "Em Tianguá, ~15 km do centro", busca: "Reserva Natureza Divina Tianguá CE" },
+  { nome: "Paredões de Janeiro (Geossítios)", distancia: "Em Tianguá", busca: "Paredões de Janeiro Tianguá CE" },
+  { nome: "Parque Nacional de Ubajara", distancia: "~17 km de Tianguá", busca: "Parque Nacional de Ubajara" },
+  { nome: "Teleférico de Ubajara", distancia: "~17 km de Tianguá", busca: "Teleférico de Ubajara Ceará" },
+  { nome: "Igreja do Céu", distancia: "~31 km de Tianguá, em Viçosa do Ceará", busca: "Igreja do Céu Viçosa do Ceará" },
+  { nome: "Casa dos Licores", distancia: "~31 km de Tianguá, em Viçosa do Ceará", busca: "Casa dos Licores Viçosa do Ceará" },
+];
+
+// ---------- CRONÔMETRO ----------
+const DATA_EVENTO = new Date("2026-08-15T10:30:00-03:00");
+function atualizarCronometro() {
+  const diff = DATA_EVENTO.getTime() - Date.now();
+  const els = {
+    dias: document.getElementById("cdDias"),
+    horas: document.getElementById("cdHoras"),
+    minutos: document.getElementById("cdMinutos"),
+    segundos: document.getElementById("cdSegundos"),
+  };
+  if (diff <= 0) {
+    els.dias.textContent = "0";
+    els.horas.textContent = "0";
+    els.minutos.textContent = "0";
+    els.segundos.textContent = "0";
+    return;
+  }
+  els.dias.textContent = Math.floor(diff / 86400000);
+  els.horas.textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, "0");
+  els.minutos.textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
+  els.segundos.textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
+}
 
 // ---------- CAMADA DE ACESSO AO SUPABASE ----------
 function headersPublicos() {
@@ -446,23 +687,39 @@ function fetchComTimeout(url, opts, ms) {
 }
 
 function mostrarAvisoConexao() {
-  const el = document.getElementById("storageWarning");
+  const el = document.getElementById("connWarning");
   if (el) el.style.display = "block";
+  agendarNovaTentativa();
 }
 function esconderAvisoConexao() {
-  const el = document.getElementById("storageWarning");
+  const el = document.getElementById("connWarning");
   if (el) el.style.display = "none";
+  tentativasReconexao = 0;
+  if (timerReconexao) { clearTimeout(timerReconexao); timerReconexao = null; }
+}
+function agendarNovaTentativa() {
+  if (timerReconexao) return;
+  if (tentativasReconexao >= 6) return;
+  tentativasReconexao++;
+  const espera = Math.min(5000 * tentativasReconexao, 30000);
+  timerReconexao = setTimeout(() => {
+    timerReconexao = null;
+    carregarPresentes();
+  }, espera);
+}
+function tentarNovamenteConexao() {
+  tentativasReconexao = 0;
+  if (timerReconexao) { clearTimeout(timerReconexao); timerReconexao = null; }
+  carregarPresentes();
+  if (abaAtual === "mural") carregarMural();
 }
 
 // ---------- CARREGAR LISTA ----------
 async function carregarPresentes() {
-  // Mostra algo imediatamente — o convidado nunca fica preso na tela de
-  // carregamento, mesmo que o Supabase demore ou esteja indisponível.
   if (presentes.length === 0) {
     presentes = PRESENTES_SEED;
     renderizarTudo();
   }
-
   try {
     const res = await fetchComTimeout(
       `${SUPABASE_URL}/rest/v1/presentes?select=*&order=criado_em.asc`,
@@ -475,16 +732,12 @@ async function carregarPresentes() {
     renderizarTudo();
     esconderAvisoConexao();
   } catch (e) {
+    console.error("Falha ao carregar presentes:", e.message);
     mostrarAvisoConexao();
   }
 }
 
 // ---------- RESERVAR PRESENTE (atômico, garantido pelo Postgres) ----------
-// A exclusividade NÃO depende de nenhuma lógica aqui no navegador — quem
-// garante que só uma pessoa consegue reservar cada item é a função
-// reservar_presente() dentro do banco (ver schema.sql), que só marca o
-// item como reservado se ele ainda estiver 'disponivel' no exato momento
-// da transação. Aqui só chamamos essa função e mostramos o resultado.
 async function reservarPresente(id, nome, mensagem) {
   try {
     const res = await fetchComTimeout(
@@ -506,14 +759,14 @@ async function reservarPresente(id, nome, mensagem) {
       return {
         sucesso: false,
         mensagem: detalhe
-          ? `Não foi possível reservar (${detalhe}). Veja o Passo de Solução de Problemas no DEPLOY.md.`
+          ? `Não foi possível reservar (${detalhe}).`
           : `Não foi possível conectar ao servidor (erro ${res.status}). Tente novamente em instantes.`,
       };
     }
     const data = await res.json();
     const resultado = Array.isArray(data) ? data[0] : data;
     if (resultado && resultado.sucesso) {
-      await carregarPresentes(); // sincroniza com o estado real do banco
+      await carregarPresentes();
     }
     return resultado || { sucesso: false, mensagem: "Resposta inesperada do servidor." };
   } catch (e) {
@@ -534,6 +787,8 @@ function renderizarTabs() {
     <button class="tab-btn ${abaAtual === 'disponiveis' ? 'active' : ''}" onclick="mudarAba('disponiveis')">Presentes Disponíveis (${disponiveis})</button>
     <button class="tab-btn ${abaAtual === 'reservados' ? 'active' : ''}" onclick="mudarAba('reservados')">Já Reservados (${reservados})</button>
     <button class="tab-btn ${abaAtual === 'mural' ? 'active' : ''}" onclick="mudarAba('mural')">Mural de Fotos (${mural.length})</button>
+    <button class="tab-btn ${abaAtual === 'hospedagem' ? 'active' : ''}" onclick="mudarAba('hospedagem')">Hospedagem</button>
+    <button class="tab-btn ${abaAtual === 'turismo' ? 'active' : ''}" onclick="mudarAba('turismo')">Turismo</button>
   `;
 }
 
@@ -549,11 +804,15 @@ function escapeHtml(str) {
   return d.innerHTML;
 }
 
+function linkGoogle(termo) {
+  return "https://www.google.com/search?q=" + encodeURIComponent(termo);
+}
+
 function renderizarGrid() {
-  if (abaAtual === "mural") {
-    renderizarMural();
-    return;
-  }
+  if (abaAtual === "mural") { renderizarMural(); return; }
+  if (abaAtual === "hospedagem") { renderizarHospedagem(); return; }
+  if (abaAtual === "turismo") { renderizarTurismo(); return; }
+
   const lista = presentes.filter(p => p.status === (abaAtual === "disponiveis" ? "disponivel" : "reservado"));
   const el = document.getElementById("content");
 
@@ -563,6 +822,45 @@ function renderizarGrid() {
   }
 
   el.innerHTML = `<div class="grid">${lista.map(cardHtml).join("")}</div>`;
+}
+
+// ---------- HOSPEDAGEM ----------
+function renderizarHospedagem() {
+  const el = document.getElementById("content");
+  el.innerHTML = `
+    <p style="text-align:center; color:var(--muted); font-size:14px; max-width:520px; margin:0 auto 28px;">
+      Separamos algumas buscas prontas para te ajudar a encontrar onde ficar por perto. Cada botão abre uma pesquisa no Google.
+    </p>
+    <div class="grid">
+      ${HOSPEDAGENS.map(h => `
+        <div class="info-link-card">
+          <div class="info-icon">🏨</div>
+          <h3 class="font-display" style="font-size:20px; margin:6px 0 4px;">${escapeHtml(h.nome)}</h3>
+          <a class="btn btn-secondary" style="display:flex; margin-top:12px;" href="${linkGoogle(h.busca)}" target="_blank" rel="noopener">Pesquisar no Google</a>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+// ---------- TURISMO ----------
+function renderizarTurismo() {
+  const el = document.getElementById("content");
+  el.innerHTML = `
+    <p style="text-align:center; color:var(--muted); font-size:14px; max-width:560px; margin:0 auto 28px;">
+      Vai aproveitar a viagem? Aqui vão algumas indicações de passeio num raio de até 50 km do local do casamento.
+    </p>
+    <div class="grid">
+      ${TURISMO.map(t => `
+        <div class="info-link-card">
+          <div class="info-icon">🌿</div>
+          <h3 class="font-display" style="font-size:20px; margin:6px 0 2px;">${escapeHtml(t.nome)}</h3>
+          <div class="distancia">${escapeHtml(t.distancia)}</div>
+          <a class="btn btn-secondary" style="display:flex;" href="${linkGoogle(t.busca)}" target="_blank" rel="noopener">Pesquisar no Google</a>
+        </div>
+      `).join("")}
+    </div>
+  `;
 }
 
 // ---------- MURAL DE FOTOS ----------
@@ -909,7 +1207,7 @@ function sairModoAdmin() {
 // ---------- ADMIN: CADASTRAR / EDITAR / EXCLUIR / LIBERAR ----------
 function abrirModalEdicao(id) {
   const editando = id !== null;
-  const p = editando ? presentes.find(x => x.id === id) : { nome: "", descricao: "", categoria: "", preco_estimado: "", link_sugestao_compra: "" };
+  const p = editando ? presentes.find(x => x.id === id) : { nome: "", descricao: "", categoria: "", link_sugestao_compra: "" };
 
   document.getElementById("modalRoot").innerHTML = `
     <div class="overlay">
@@ -1007,8 +1305,8 @@ async function liberarPresente(id) {
 }
 
 // ---------- INIT ----------
-document.getElementById("linkHospedagem").href =
-  "https://www.google.com/search?q=" + encodeURIComponent("hotéis próximos a " + ENDERECO_HOSPEDAGEM);
+atualizarCronometro();
+setInterval(atualizarCronometro, 1000);
 carregarPresentes();
 </script>
 </body>
